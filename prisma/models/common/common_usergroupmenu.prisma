@@ -1,0 +1,11 @@
+model common_usergroupmenu {
+    usergroupmenu_id Int @id @default(autoincrement())
+    usergroup_id     Int
+    menu_id          Int
+
+    state      String   @db.VarChar(5)
+    updated_at DateTime @updatedAt
+    created_at DateTime @default(now())
+
+    @@map("tbl_common_usergroupmenu")
+}

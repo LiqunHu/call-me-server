@@ -29,13 +29,6 @@
       "name": "Launch Program",
       "program": "${workspaceFolder}/src/index.ts",
       "runtimeExecutable": "tsx",
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Update Table",
-      "runtimeArgs": ["-r", "ts-node/register"],
-      "args": ["${workspaceFolder}/src/bin/updateTable.ts"]
     }
   ]
 }

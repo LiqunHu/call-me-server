@@ -9,7 +9,6 @@
     "types": ["node"],
 
     // File Layout
-    "rootDir": "./src",
     "outDir": "./dist",
     "baseUrl": "src" /* Specify the base directory to resolve non-relative module names. */,
     "paths": {
@@ -46,11 +45,7 @@
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true,
-    // for typeorm
-    "experimentalDecorators": true /* Enable experimental support for TC39 stage 2 draft decorators. */,
-    "emitDecoratorMetadata": true /* Emit design-type metadata for decorated declarations in source files. */,
-    "strictPropertyInitialization": false /* Check for class properties that are declared but not set in the constructor. */,
+    "skipLibCheck": true
   },
   "exclude": ["node_modules"]
 }

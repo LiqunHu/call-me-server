@@ -1,0 +1,30 @@
+model common_user {
+    user_id             String    @id @default(uuid()) @db.VarChar(100)
+    user_username       String    @default("") @db.VarChar(100)
+    user_type           String    @db.VarChar(10)
+    user_email          String    @default("") @db.VarChar(100)
+    user_country_code   String    @default("") @db.VarChar(5)
+    user_phone          String    @default("") @db.VarChar(20)
+    user_discord        String    @default("") @db.VarChar(50)
+    user_telegram       String    @default("") @db.VarChar(50)
+    user_account        String    @default("") @db.VarChar(100)
+    user_password       String    @db.VarChar(100)
+    user_password_error Int
+    user_login_time     DateTime?
+    user_name           String    @default("") @db.VarChar(100)
+    user_gender         String    @default("") @db.VarChar(1)
+    user_avatar         String    @default("") @db.VarChar(200)
+    user_province       String    @default("") @db.VarChar(20)
+    user_city           String    @default("") @db.VarChar(20)
+    user_district       String    @default("") @db.VarChar(20)
+    user_address        String    @default("") @db.VarChar(100)
+    user_zipcode        String    @default("") @db.VarChar(20)
+    user_company        String    @default("") @db.VarChar(200)
+    user_remark         String    @default("") @db.VarChar(200)
+
+    state      String   @db.VarChar(5)
+    updated_at DateTime @updatedAt
+    created_at DateTime @default(now())
+
+    @@map("tbl_common_user")
+}

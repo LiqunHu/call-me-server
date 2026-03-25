@@ -1,0 +1,16 @@
+model common_api {
+    /// primary key
+    api_id   Int    @id @default(autoincrement())
+    api_type String @db.VarChar(10)
+    api_name String @db.VarChar(300)
+    api_path String @db.VarChar(300)
+    api_function String @db.VarChar(100)
+    auth_flag String @db.VarChar(2)
+    api_remark String @db.VarChar(30)
+
+    state      String   @db.VarChar(5)
+    updated_at DateTime @updatedAt
+    created_at DateTime @default(now())
+
+    @@map("tbl_common_api")
+}
