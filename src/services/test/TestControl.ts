@@ -1,0 +1,21 @@
+import { Request, Response } from 'express'
+import common from '@utils/Common'
+import srv from './TestServer'
+import { createLogger } from '@logger'
+const logger = createLogger(__filename)
+
+export default async function (req: Request, res: Response) {
+  try {
+    const method = await common.reqTrans(req, __filename)
+    let ret = 'common_01'
+    logger.debug(method)
+
+    if (method === 'echo') {
+      ret = await srv.echoAct(req)
+    }
+
+    common.sendData(res, ret)
+  } catch (error) {
+    common.sendFault(res, error)
+  }
+}

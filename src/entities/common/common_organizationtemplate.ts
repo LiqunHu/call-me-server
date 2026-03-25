@@ -1,0 +1,14 @@
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm'
+import { base_entity } from '@/entities/base_entity'
+
+@Entity({ name: 'tbl_common_organizationtemplate' })
+export class common_organizationtemplate extends BaseEntity {
+  @PrimaryGeneratedColumn({ comment: '' })
+  organizationtemplate_id: number
+
+  @Column({ length: 50, comment: '' })
+  organizationtemplate_name: string
+
+  @Column(() => base_entity, { prefix: '' })
+  base: base_entity
+}
