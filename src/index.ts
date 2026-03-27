@@ -1,7 +1,11 @@
 #!/usr/bin/env node
+import 'dotenv/config'
 import http from 'http'
 // 设置logger
 import app from './app'
+
+import redisClient from '@utils/RedisClient'
+import { initDB, closeDB } from '@utils/DB'
 
 let port = 9091
 
@@ -66,11 +70,19 @@ const onError = (error: NodeJS.ErrnoException) => {
  * Event listener for HTTP server "listening" event.
  */
 
-const onListening = () => {
+const onListening = async () => {
   console.log('services running on port ' + port)
   let addr = server.address()
   let bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr?.port
   console.log('Listening on ' + bind)
+
+  console.log('Initializing Redis client...')
+  await redisClient.initClient(process.env.REDIS_URL || '')
+  console.log('Redis client initialized successfully')
+
+  console.log('Initializing database connection...')
+  await initDB(process.env.DATABASE_URL || '')
+  console.log('Database connection initialized successfully')
 }
 
 /**
@@ -78,3 +90,25 @@ const onListening = () => {
  */
 server.listen(port, onListening)
 server.on('error', onError)
+
+const gracefulShutdown = (signal: string) => {
+  console.log(`\n📡 Received ${signal}. Shutting down gracefully...`)
+  server.close(async (err) => {
+    if (err) {
+      console.error('❌ Error during server close:', err)
+      process.exit(1)
+    }
+    closeDB()
+    redisClient.quit()
+    console.log('HTTP server closed')
+    process.exit(0)
+  })
+
+  setTimeout(() => {
+    console.error('⏰ Forced shutdown after timeout')
+    process.exit(1) // Exit with error code to indicate an issue
+  }, 10000) // 10 seconds timeout
+}
+
+process.on('SIGINT', gracefulShutdown)
+process.on('SIGTERM', gracefulShutdown)

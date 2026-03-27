@@ -385,9 +385,11 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   common_api: 'common_api',
+  common_group: 'common_group',
+  common_group_menu: 'common_group_menu',
+  common_system_menu: 'common_system_menu',
   common_user: 'common_user',
-  common_usergroup: 'common_usergroup',
-  common_usergroupmenu: 'common_usergroupmenu'
+  common_user_group: 'common_user_group'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -403,7 +405,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "common_api" | "common_user" | "common_usergroup" | "common_usergroupmenu"
+    modelProps: "common_api" | "common_group" | "common_group_menu" | "common_system_menu" | "common_user" | "common_user_group"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -481,6 +483,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    common_group: {
+      payload: Prisma.$common_groupPayload<ExtArgs>
+      fields: Prisma.common_groupFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.common_groupFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_groupPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.common_groupFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_groupPayload>
+        }
+        findFirst: {
+          args: Prisma.common_groupFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_groupPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.common_groupFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_groupPayload>
+        }
+        findMany: {
+          args: Prisma.common_groupFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_groupPayload>[]
+        }
+        create: {
+          args: Prisma.common_groupCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_groupPayload>
+        }
+        createMany: {
+          args: Prisma.common_groupCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.common_groupCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_groupPayload>[]
+        }
+        delete: {
+          args: Prisma.common_groupDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_groupPayload>
+        }
+        update: {
+          args: Prisma.common_groupUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_groupPayload>
+        }
+        deleteMany: {
+          args: Prisma.common_groupDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.common_groupUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.common_groupUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_groupPayload>[]
+        }
+        upsert: {
+          args: Prisma.common_groupUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_groupPayload>
+        }
+        aggregate: {
+          args: Prisma.Common_groupAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCommon_group>
+        }
+        groupBy: {
+          args: Prisma.common_groupGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Common_groupGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.common_groupCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Common_groupCountAggregateOutputType> | number
+        }
+      }
+    }
+    common_group_menu: {
+      payload: Prisma.$common_group_menuPayload<ExtArgs>
+      fields: Prisma.common_group_menuFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.common_group_menuFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_group_menuPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.common_group_menuFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_group_menuPayload>
+        }
+        findFirst: {
+          args: Prisma.common_group_menuFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_group_menuPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.common_group_menuFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_group_menuPayload>
+        }
+        findMany: {
+          args: Prisma.common_group_menuFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_group_menuPayload>[]
+        }
+        create: {
+          args: Prisma.common_group_menuCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_group_menuPayload>
+        }
+        createMany: {
+          args: Prisma.common_group_menuCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.common_group_menuCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_group_menuPayload>[]
+        }
+        delete: {
+          args: Prisma.common_group_menuDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_group_menuPayload>
+        }
+        update: {
+          args: Prisma.common_group_menuUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_group_menuPayload>
+        }
+        deleteMany: {
+          args: Prisma.common_group_menuDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.common_group_menuUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.common_group_menuUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_group_menuPayload>[]
+        }
+        upsert: {
+          args: Prisma.common_group_menuUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_group_menuPayload>
+        }
+        aggregate: {
+          args: Prisma.Common_group_menuAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCommon_group_menu>
+        }
+        groupBy: {
+          args: Prisma.common_group_menuGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Common_group_menuGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.common_group_menuCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Common_group_menuCountAggregateOutputType> | number
+        }
+      }
+    }
+    common_system_menu: {
+      payload: Prisma.$common_system_menuPayload<ExtArgs>
+      fields: Prisma.common_system_menuFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.common_system_menuFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_system_menuPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.common_system_menuFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_system_menuPayload>
+        }
+        findFirst: {
+          args: Prisma.common_system_menuFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_system_menuPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.common_system_menuFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_system_menuPayload>
+        }
+        findMany: {
+          args: Prisma.common_system_menuFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_system_menuPayload>[]
+        }
+        create: {
+          args: Prisma.common_system_menuCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_system_menuPayload>
+        }
+        createMany: {
+          args: Prisma.common_system_menuCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.common_system_menuCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_system_menuPayload>[]
+        }
+        delete: {
+          args: Prisma.common_system_menuDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_system_menuPayload>
+        }
+        update: {
+          args: Prisma.common_system_menuUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_system_menuPayload>
+        }
+        deleteMany: {
+          args: Prisma.common_system_menuDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.common_system_menuUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.common_system_menuUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_system_menuPayload>[]
+        }
+        upsert: {
+          args: Prisma.common_system_menuUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_system_menuPayload>
+        }
+        aggregate: {
+          args: Prisma.Common_system_menuAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCommon_system_menu>
+        }
+        groupBy: {
+          args: Prisma.common_system_menuGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Common_system_menuGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.common_system_menuCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Common_system_menuCountAggregateOutputType> | number
+        }
+      }
+    }
     common_user: {
       payload: Prisma.$common_userPayload<ExtArgs>
       fields: Prisma.common_userFieldRefs
@@ -555,151 +779,77 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    common_usergroup: {
-      payload: Prisma.$common_usergroupPayload<ExtArgs>
-      fields: Prisma.common_usergroupFieldRefs
+    common_user_group: {
+      payload: Prisma.$common_user_groupPayload<ExtArgs>
+      fields: Prisma.common_user_groupFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.common_usergroupFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_usergroupPayload> | null
+          args: Prisma.common_user_groupFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_user_groupPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.common_usergroupFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_usergroupPayload>
+          args: Prisma.common_user_groupFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_user_groupPayload>
         }
         findFirst: {
-          args: Prisma.common_usergroupFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_usergroupPayload> | null
+          args: Prisma.common_user_groupFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_user_groupPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.common_usergroupFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_usergroupPayload>
+          args: Prisma.common_user_groupFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_user_groupPayload>
         }
         findMany: {
-          args: Prisma.common_usergroupFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_usergroupPayload>[]
+          args: Prisma.common_user_groupFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_user_groupPayload>[]
         }
         create: {
-          args: Prisma.common_usergroupCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_usergroupPayload>
+          args: Prisma.common_user_groupCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_user_groupPayload>
         }
         createMany: {
-          args: Prisma.common_usergroupCreateManyArgs<ExtArgs>
+          args: Prisma.common_user_groupCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.common_usergroupCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_usergroupPayload>[]
+          args: Prisma.common_user_groupCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_user_groupPayload>[]
         }
         delete: {
-          args: Prisma.common_usergroupDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_usergroupPayload>
+          args: Prisma.common_user_groupDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_user_groupPayload>
         }
         update: {
-          args: Prisma.common_usergroupUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_usergroupPayload>
+          args: Prisma.common_user_groupUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_user_groupPayload>
         }
         deleteMany: {
-          args: Prisma.common_usergroupDeleteManyArgs<ExtArgs>
+          args: Prisma.common_user_groupDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.common_usergroupUpdateManyArgs<ExtArgs>
+          args: Prisma.common_user_groupUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.common_usergroupUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_usergroupPayload>[]
+          args: Prisma.common_user_groupUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_user_groupPayload>[]
         }
         upsert: {
-          args: Prisma.common_usergroupUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_usergroupPayload>
+          args: Prisma.common_user_groupUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_user_groupPayload>
         }
         aggregate: {
-          args: Prisma.Common_usergroupAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateCommon_usergroup>
+          args: Prisma.Common_user_groupAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCommon_user_group>
         }
         groupBy: {
-          args: Prisma.common_usergroupGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.Common_usergroupGroupByOutputType>[]
+          args: Prisma.common_user_groupGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Common_user_groupGroupByOutputType>[]
         }
         count: {
-          args: Prisma.common_usergroupCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.Common_usergroupCountAggregateOutputType> | number
-        }
-      }
-    }
-    common_usergroupmenu: {
-      payload: Prisma.$common_usergroupmenuPayload<ExtArgs>
-      fields: Prisma.common_usergroupmenuFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.common_usergroupmenuFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_usergroupmenuPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.common_usergroupmenuFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_usergroupmenuPayload>
-        }
-        findFirst: {
-          args: Prisma.common_usergroupmenuFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_usergroupmenuPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.common_usergroupmenuFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_usergroupmenuPayload>
-        }
-        findMany: {
-          args: Prisma.common_usergroupmenuFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_usergroupmenuPayload>[]
-        }
-        create: {
-          args: Prisma.common_usergroupmenuCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_usergroupmenuPayload>
-        }
-        createMany: {
-          args: Prisma.common_usergroupmenuCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.common_usergroupmenuCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_usergroupmenuPayload>[]
-        }
-        delete: {
-          args: Prisma.common_usergroupmenuDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_usergroupmenuPayload>
-        }
-        update: {
-          args: Prisma.common_usergroupmenuUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_usergroupmenuPayload>
-        }
-        deleteMany: {
-          args: Prisma.common_usergroupmenuDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.common_usergroupmenuUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.common_usergroupmenuUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_usergroupmenuPayload>[]
-        }
-        upsert: {
-          args: Prisma.common_usergroupmenuUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$common_usergroupmenuPayload>
-        }
-        aggregate: {
-          args: Prisma.Common_usergroupmenuAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateCommon_usergroupmenu>
-        }
-        groupBy: {
-          args: Prisma.common_usergroupmenuGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.Common_usergroupmenuGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.common_usergroupmenuCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.Common_usergroupmenuCountAggregateOutputType> | number
+          args: Prisma.common_user_groupCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Common_user_groupCountAggregateOutputType> | number
         }
       }
     }
@@ -758,6 +908,49 @@ export const Common_apiScalarFieldEnum = {
 export type Common_apiScalarFieldEnum = (typeof Common_apiScalarFieldEnum)[keyof typeof Common_apiScalarFieldEnum]
 
 
+export const Common_groupScalarFieldEnum = {
+  group_id: 'group_id',
+  group_type: 'group_type',
+  group_code: 'group_code',
+  group_name: 'group_name',
+  node_type: 'node_type',
+  parent_id: 'parent_id',
+  state: 'state',
+  updated_at: 'updated_at',
+  created_at: 'created_at'
+} as const
+
+export type Common_groupScalarFieldEnum = (typeof Common_groupScalarFieldEnum)[keyof typeof Common_groupScalarFieldEnum]
+
+
+export const Common_group_menuScalarFieldEnum = {
+  group_menu_id: 'group_menu_id',
+  group_id: 'group_id',
+  menu_id: 'menu_id',
+  state: 'state',
+  updated_at: 'updated_at',
+  created_at: 'created_at'
+} as const
+
+export type Common_group_menuScalarFieldEnum = (typeof Common_group_menuScalarFieldEnum)[keyof typeof Common_group_menuScalarFieldEnum]
+
+
+export const Common_system_menuScalarFieldEnum = {
+  menu_id: 'menu_id',
+  menu_name: 'menu_name',
+  menu_icon: 'menu_icon',
+  menu_index: 'menu_index',
+  api_id: 'api_id',
+  node_type: 'node_type',
+  parent_id: 'parent_id',
+  state: 'state',
+  updated_at: 'updated_at',
+  created_at: 'created_at'
+} as const
+
+export type Common_system_menuScalarFieldEnum = (typeof Common_system_menuScalarFieldEnum)[keyof typeof Common_system_menuScalarFieldEnum]
+
+
 export const Common_userScalarFieldEnum = {
   user_id: 'user_id',
   user_username: 'user_username',
@@ -789,32 +982,16 @@ export const Common_userScalarFieldEnum = {
 export type Common_userScalarFieldEnum = (typeof Common_userScalarFieldEnum)[keyof typeof Common_userScalarFieldEnum]
 
 
-export const Common_usergroupScalarFieldEnum = {
-  usergroup_id: 'usergroup_id',
-  organization_id: 'organization_id',
-  usergroup_type: 'usergroup_type',
-  usergroup_code: 'usergroup_code',
-  usergroup_name: 'usergroup_name',
-  node_type: 'node_type',
-  parent_id: 'parent_id',
+export const Common_user_groupScalarFieldEnum = {
+  user_group_id: 'user_group_id',
+  user_id: 'user_id',
+  group_id: 'group_id',
   state: 'state',
   updated_at: 'updated_at',
   created_at: 'created_at'
 } as const
 
-export type Common_usergroupScalarFieldEnum = (typeof Common_usergroupScalarFieldEnum)[keyof typeof Common_usergroupScalarFieldEnum]
-
-
-export const Common_usergroupmenuScalarFieldEnum = {
-  usergroupmenu_id: 'usergroupmenu_id',
-  usergroup_id: 'usergroup_id',
-  menu_id: 'menu_id',
-  state: 'state',
-  updated_at: 'updated_at',
-  created_at: 'created_at'
-} as const
-
-export type Common_usergroupmenuScalarFieldEnum = (typeof Common_usergroupmenuScalarFieldEnum)[keyof typeof Common_usergroupmenuScalarFieldEnum]
+export type Common_user_groupScalarFieldEnum = (typeof Common_user_groupScalarFieldEnum)[keyof typeof Common_user_groupScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -998,9 +1175,11 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   common_api?: Prisma.common_apiOmit
+  common_group?: Prisma.common_groupOmit
+  common_group_menu?: Prisma.common_group_menuOmit
+  common_system_menu?: Prisma.common_system_menuOmit
   common_user?: Prisma.common_userOmit
-  common_usergroup?: Prisma.common_usergroupOmit
-  common_usergroupmenu?: Prisma.common_usergroupmenuOmit
+  common_user_group?: Prisma.common_user_groupOmit
 }
 
 /* Types for Logging */

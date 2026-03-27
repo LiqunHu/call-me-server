@@ -1,4 +1,3 @@
-import 'dotenv/config'
 import express, { NextFunction, Request, Response } from 'express'
 import path from 'path'
 import routers from '@/routes'

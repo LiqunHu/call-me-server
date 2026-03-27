@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import common from '@/utils/Common'
-import srv from './GroupServer'
-import { createLogger } from '@app/logger'
+import srv from './SystemApiServer'
+import { createLogger } from '@utils/Logger'
 const logger = createLogger(__filename)
 
 export default async function (req: Request, res: Response) {
@@ -13,12 +13,14 @@ export default async function (req: Request, res: Response) {
       ret = await srv.initAct()
     } else if (method === 'search') {
       ret = await srv.searchAct()
-    } else if (method === 'getcheck') {
-      ret = await srv.getCheckAct(req)
-    } else if (method === 'add') {
-      ret = await srv.addAct(req)
-    } else if (method === 'modify') {
-      ret = await srv.modifyAct(req)
+    } else if (method === 'addFolder') {
+      ret = await srv.addFolderAct(req)
+    } else if (method === 'modifyFolder') {
+      ret = await srv.modifyFolderAct(req)
+    } else if (method === 'addMenu') {
+      ret = await srv.addMenuAct(req)
+    } else if (method === 'modifyMenu') {
+      ret = await srv.modifyMenuAct(req)
     } else if (method === 'remove') {
       ret = await srv.removeAct(req)
     }

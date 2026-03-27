@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import common from '@/utils/Common'
-import srv from './OrganizationUserServer'
-import { createLogger } from '@app/logger'
+import srv from './GroupServer'
+import { createLogger } from '@utils/Logger'
 const logger = createLogger(__filename)
 
 export default async function (req: Request, res: Response) {
@@ -10,15 +10,17 @@ export default async function (req: Request, res: Response) {
     let ret = 'common_01'
     logger.debug(method)
     if (method === 'init') {
-      ret = await srv.initAct(req)
+      ret = await srv.initAct()
     } else if (method === 'search') {
-      ret = await srv.searchAct(req)
+      ret = await srv.searchAct()
+    } else if (method === 'getcheck') {
+      ret = await srv.getCheckAct(req)
     } else if (method === 'add') {
       ret = await srv.addAct(req)
     } else if (method === 'modify') {
       ret = await srv.modifyAct(req)
-    } else if (method === 'delete') {
-      ret = await srv.deleteAct(req)
+    } else if (method === 'remove') {
+      ret = await srv.removeAct(req)
     }
     common.sendData(res, ret)
   } catch (error) {

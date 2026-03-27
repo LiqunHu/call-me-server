@@ -52,9 +52,11 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   common_api: 'common_api',
+  common_group: 'common_group',
+  common_group_menu: 'common_group_menu',
+  common_system_menu: 'common_system_menu',
   common_user: 'common_user',
-  common_usergroup: 'common_usergroup',
-  common_usergroupmenu: 'common_usergroupmenu'
+  common_user_group: 'common_user_group'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -89,6 +91,49 @@ export const Common_apiScalarFieldEnum = {
 export type Common_apiScalarFieldEnum = (typeof Common_apiScalarFieldEnum)[keyof typeof Common_apiScalarFieldEnum]
 
 
+export const Common_groupScalarFieldEnum = {
+  group_id: 'group_id',
+  group_type: 'group_type',
+  group_code: 'group_code',
+  group_name: 'group_name',
+  node_type: 'node_type',
+  parent_id: 'parent_id',
+  state: 'state',
+  updated_at: 'updated_at',
+  created_at: 'created_at'
+} as const
+
+export type Common_groupScalarFieldEnum = (typeof Common_groupScalarFieldEnum)[keyof typeof Common_groupScalarFieldEnum]
+
+
+export const Common_group_menuScalarFieldEnum = {
+  group_menu_id: 'group_menu_id',
+  group_id: 'group_id',
+  menu_id: 'menu_id',
+  state: 'state',
+  updated_at: 'updated_at',
+  created_at: 'created_at'
+} as const
+
+export type Common_group_menuScalarFieldEnum = (typeof Common_group_menuScalarFieldEnum)[keyof typeof Common_group_menuScalarFieldEnum]
+
+
+export const Common_system_menuScalarFieldEnum = {
+  menu_id: 'menu_id',
+  menu_name: 'menu_name',
+  menu_icon: 'menu_icon',
+  menu_index: 'menu_index',
+  api_id: 'api_id',
+  node_type: 'node_type',
+  parent_id: 'parent_id',
+  state: 'state',
+  updated_at: 'updated_at',
+  created_at: 'created_at'
+} as const
+
+export type Common_system_menuScalarFieldEnum = (typeof Common_system_menuScalarFieldEnum)[keyof typeof Common_system_menuScalarFieldEnum]
+
+
 export const Common_userScalarFieldEnum = {
   user_id: 'user_id',
   user_username: 'user_username',
@@ -120,32 +165,16 @@ export const Common_userScalarFieldEnum = {
 export type Common_userScalarFieldEnum = (typeof Common_userScalarFieldEnum)[keyof typeof Common_userScalarFieldEnum]
 
 
-export const Common_usergroupScalarFieldEnum = {
-  usergroup_id: 'usergroup_id',
-  organization_id: 'organization_id',
-  usergroup_type: 'usergroup_type',
-  usergroup_code: 'usergroup_code',
-  usergroup_name: 'usergroup_name',
-  node_type: 'node_type',
-  parent_id: 'parent_id',
+export const Common_user_groupScalarFieldEnum = {
+  user_group_id: 'user_group_id',
+  user_id: 'user_id',
+  group_id: 'group_id',
   state: 'state',
   updated_at: 'updated_at',
   created_at: 'created_at'
 } as const
 
-export type Common_usergroupScalarFieldEnum = (typeof Common_usergroupScalarFieldEnum)[keyof typeof Common_usergroupScalarFieldEnum]
-
-
-export const Common_usergroupmenuScalarFieldEnum = {
-  usergroupmenu_id: 'usergroupmenu_id',
-  usergroup_id: 'usergroup_id',
-  menu_id: 'menu_id',
-  state: 'state',
-  updated_at: 'updated_at',
-  created_at: 'created_at'
-} as const
-
-export type Common_usergroupmenuScalarFieldEnum = (typeof Common_usergroupmenuScalarFieldEnum)[keyof typeof Common_usergroupmenuScalarFieldEnum]
+export type Common_user_groupScalarFieldEnum = (typeof Common_user_groupScalarFieldEnum)[keyof typeof Common_user_groupScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -9,7 +9,9 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/common_api.js'
+export type * from './models/common_group.js'
+export type * from './models/common_group_menu.js'
+export type * from './models/common_system_menu.js'
 export type * from './models/common_user.js'
-export type * from './models/common_usergroup.js'
-export type * from './models/common_usergroupmenu.js'
+export type * from './models/common_user_group.js'
 export type * from './commonInputTypes.js'

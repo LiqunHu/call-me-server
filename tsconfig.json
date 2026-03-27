@@ -16,7 +16,7 @@
       "@app/*": ["app/*"],
       "@services/*": ["services/*"],
       "@schedule/*": ["schedule/*"],
-      "@entities/*": ["entities/*"],
+      "@prisma/*": ["prisma/*"],
       "@utils/*": ["utils/*"],
       "@logger": ["utils/Logger.ts"]
     },

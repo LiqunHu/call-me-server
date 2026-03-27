@@ -23,17 +23,27 @@ export * from './enums.js';
  */
 export type common_api = Prisma.common_apiModel
 /**
+ * Model common_group
+ * 
+ */
+export type common_group = Prisma.common_groupModel
+/**
+ * Model common_group_menu
+ * 
+ */
+export type common_group_menu = Prisma.common_group_menuModel
+/**
+ * Model common_system_menu
+ * 
+ */
+export type common_system_menu = Prisma.common_system_menuModel
+/**
  * Model common_user
  * 
  */
 export type common_user = Prisma.common_userModel
 /**
- * Model common_usergroup
+ * Model common_user_group
  * 
  */
-export type common_usergroup = Prisma.common_usergroupModel
-/**
- * Model common_usergroupmenu
- * 
- */
-export type common_usergroupmenu = Prisma.common_usergroupmenuModel
+export type common_user_group = Prisma.common_user_groupModel

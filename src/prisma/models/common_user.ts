@@ -512,7 +512,7 @@ export type common_userCreateInput = {
   user_telegram?: string
   user_account?: string
   user_password: string
-  user_password_error: number
+  user_password_error?: number
   user_login_time?: Date | string | null
   user_name?: string
   user_gender?: string
@@ -524,7 +524,7 @@ export type common_userCreateInput = {
   user_zipcode?: string
   user_company?: string
   user_remark?: string
-  state: string
+  state?: string
   updated_at?: Date | string
   created_at?: Date | string
 }
@@ -540,7 +540,7 @@ export type common_userUncheckedCreateInput = {
   user_telegram?: string
   user_account?: string
   user_password: string
-  user_password_error: number
+  user_password_error?: number
   user_login_time?: Date | string | null
   user_name?: string
   user_gender?: string
@@ -552,7 +552,7 @@ export type common_userUncheckedCreateInput = {
   user_zipcode?: string
   user_company?: string
   user_remark?: string
-  state: string
+  state?: string
   updated_at?: Date | string
   created_at?: Date | string
 }
@@ -624,7 +624,7 @@ export type common_userCreateManyInput = {
   user_telegram?: string
   user_account?: string
   user_password: string
-  user_password_error: number
+  user_password_error?: number
   user_login_time?: Date | string | null
   user_name?: string
   user_gender?: string
@@ -636,7 +636,7 @@ export type common_userCreateManyInput = {
   user_zipcode?: string
   user_company?: string
   user_remark?: string
-  state: string
+  state?: string
   updated_at?: Date | string
   created_at?: Date | string
 }

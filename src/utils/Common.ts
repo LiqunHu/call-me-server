@@ -2,15 +2,18 @@ import fs from 'fs'
 import Joi from 'joi'
 import { Request, Response } from 'express'
 import { createLogger } from '@/utils/Logger'
-import Error from './Error'
+import ErrorMap from './ErrorMap'
 
 const logger = createLogger(__filename)
 
-function isEmpty(o: object): boolean {
-  if (Object.keys(o).length > 0) {
+function isEmpty(o: object | null | undefined): boolean {
+  if (o === null || o === undefined) {
     return true
-  } else {
+  }
+  if (Object.keys(o).length > 0) {
     return false
+  } else {
+    return true
   }
 }
 
@@ -24,10 +27,13 @@ async function reqTrans(req: Request, callFile: string) {
   const doc = req.body
   const validatorFile = callFile.substring(0, callFile.length - 3) + '.validator' + callFile.substring(callFile.length - 3, callFile.length)
   if (fs.existsSync(validatorFile)) {
+    if (isEmpty(doc)) {
+      throw new Error('ValidationError')
+    }
     const validator = await import(validatorFile)
     if (validator.default?.apiList && Object.prototype.hasOwnProperty.call(validator.default.apiList, method)) {
       const reqJoiSchema = validator.default.apiList[method].JoiSchema
-      if (reqJoiSchema.body && !isEmpty(doc)) {
+      if (reqJoiSchema.body) {
         const schema = Joi.object(reqJoiSchema.body)
         await schema.validateAsync(doc)
       }
@@ -57,10 +63,10 @@ function error(errcode?: string) {
 function sendData(res: Response, data: string | object) {
   let sendData
   if (typeof data === 'string') {
-    if (data in Error) {
+    if (data in ErrorMap) {
       sendData = {
         errno: data,
-        msg: Error[data],
+        msg: ErrorMap[data],
       }
     } else {
       sendData = {
@@ -79,27 +85,32 @@ function sendData(res: Response, data: string | object) {
 }
 
 function sendFault(res: any, msg: any) {
-  let sendData = {}
-  logger.error(msg.stack)
+  let sendData = { errno: -1, msg: 'Internal Error' }
 
-  if (process.env.NODE_ENV === 'test') {
-    sendData = {
-      errno: -1,
-      msg: msg.stack,
-    }
-  } else {
-    if (msg.name === 'ValidationError') {
+  if (msg instanceof Error) {
+    logger.fatal(msg.stack)
+    if (process.env.NODE_ENV === 'test') {
       sendData = {
         errno: -3,
-        msg: msg.stack,
+        msg: msg.stack || 'Validation Error',
       }
     } else {
-      sendData = {
-        errno: -1,
-        msg: 'Internal Error',
+      if (msg.name === 'ValidationError') {
+        sendData = {
+          errno: -3,
+          msg: 'Validation Error',
+        }
+      } else {
+        sendData = {
+          errno: -1,
+          msg: 'Internal Error',
+        }
       }
     }
+  } else {
+    logger.fatal(msg)
   }
+
   res.status(500).send(sendData)
 }
 function generateRandomAlphaNum(len: number) {

@@ -1,0 +1,11 @@
+model common_user_group {
+    user_group_id Int    @id @default(autoincrement())
+    user_id       String
+    group_id      Int
+
+    state      String   @default("1") @db.VarChar(5)
+    updated_at DateTime @updatedAt
+    created_at DateTime @default(now())
+
+    @@map("tbl_common_user_group")
+}

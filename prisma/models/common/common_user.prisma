@@ -9,7 +9,7 @@ model common_user {
     user_telegram       String    @default("") @db.VarChar(50)
     user_account        String    @default("") @db.VarChar(100)
     user_password       String    @db.VarChar(100)
-    user_password_error Int
+    user_password_error Int       @default(0)
     user_login_time     DateTime?
     user_name           String    @default("") @db.VarChar(100)
     user_gender         String    @default("") @db.VarChar(1)
@@ -22,7 +22,7 @@ model common_user {
     user_company        String    @default("") @db.VarChar(200)
     user_remark         String    @default("") @db.VarChar(200)
 
-    state      String   @db.VarChar(5)
+    state      String   @default("1") @db.VarChar(5)
     updated_at DateTime @updatedAt
     created_at DateTime @default(now())
 

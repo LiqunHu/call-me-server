@@ -1,0 +1,11 @@
+model common_group_menu {
+    group_menu_id Int @id @default(autoincrement())
+    group_id      Int
+    menu_id       Int
+
+    state      String   @default("1") @db.VarChar(5)
+    updated_at DateTime @updatedAt
+    created_at DateTime @default(now())
+
+    @@map("tbl_common_group_menu")
+}

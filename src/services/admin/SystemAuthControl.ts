@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import common from '@/utils/Common'
 import srv from './SystemAuthServer'
-import { createLogger } from '@app/logger'
+import { createLogger } from '@utils/Logger'
 const logger = createLogger(__filename)
 
 export default async function (req: Request, res: Response) {

@@ -322,26 +322,26 @@ export type common_apiScalarWhereWithAggregatesInput = {
 }
 
 export type common_apiCreateInput = {
-  api_type: string
-  api_name: string
-  api_path: string
-  api_function: string
-  auth_flag: string
-  api_remark: string
-  state: string
+  api_type?: string
+  api_name?: string
+  api_path?: string
+  api_function?: string
+  auth_flag?: string
+  api_remark?: string
+  state?: string
   updated_at?: Date | string
   created_at?: Date | string
 }
 
 export type common_apiUncheckedCreateInput = {
   api_id?: number
-  api_type: string
-  api_name: string
-  api_path: string
-  api_function: string
-  auth_flag: string
-  api_remark: string
-  state: string
+  api_type?: string
+  api_name?: string
+  api_path?: string
+  api_function?: string
+  auth_flag?: string
+  api_remark?: string
+  state?: string
   updated_at?: Date | string
   created_at?: Date | string
 }
@@ -373,13 +373,13 @@ export type common_apiUncheckedUpdateInput = {
 
 export type common_apiCreateManyInput = {
   api_id?: number
-  api_type: string
-  api_name: string
-  api_path: string
-  api_function: string
-  auth_flag: string
-  api_remark: string
-  state: string
+  api_type?: string
+  api_name?: string
+  api_path?: string
+  api_function?: string
+  auth_flag?: string
+  api_remark?: string
+  state?: string
   updated_at?: Date | string
   created_at?: Date | string
 }
@@ -532,9 +532,6 @@ export type $common_apiPayload<ExtArgs extends runtime.Types.Extensions.Internal
   name: "common_api"
   objects: {}
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    /**
-     * primary key
-     */
     api_id: number
     api_type: string
     api_name: string
