@@ -780,6 +780,7 @@ async function recursionMenu(groups: number[], parent_id: string | number): Prom
 
 export default {
   signinAct,
+  loginInit,
   // captchaAct,
   // nowAct,
   // loginSmsAct,
@@ -789,5 +790,4 @@ export default {
   // userExistAct,
   // registerSmsAct,
   // registerAct,
-  // loginInit
 }

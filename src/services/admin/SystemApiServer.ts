@@ -1,17 +1,10 @@
-import { Not, In } from 'typeorm'
 import { Request } from 'express'
-import _ from 'lodash'
 import common from '@/utils/Common'
 import GLBConfig from '@/utils/GLBConfig'
 import refreshRedis from '@schedule/refreshRedis'
-import { simpleSelect } from '@/utils/DB'
-import {
-  common_systemmenu,
-  common_api,
-  common_usergroup,
-  common_usergroupmenu,
-} from '@entities/common'
-import { createLogger } from '@app/logger'
+import { prisma } from '@/utils/DB'
+import { createLogger } from '@logger'
+
 const logger = createLogger(__filename)
 
 async function initAct() {
@@ -24,42 +17,57 @@ async function initAct() {
 }
 
 async function searchAct() {
-  const menus = [
-    {
-      name: 'Root',
-      systemmenu_id: 0,
-      node_type: GLBConfig.NODE_TYPE.NODE_ROOT,
-      children: [],
-    },
-  ]
-  menus[0].children = JSON.parse(JSON.stringify(await genMenu('0')))
-  return common.success(menus)
+  const root = {
+    name: 'Root',
+    menu_id: 0,
+    node_type: GLBConfig.NODE_TYPE.NODE_ROOT,
+    children: [] as any[],
+  }
+  root.children = JSON.parse(JSON.stringify(await genMenu('0')))
+  return common.success([root])
 }
 
-async function genMenu(parentId: string): Promise<any> {
-  const return_list = []
-  const queryStr = `SELECT
-                    a.*, b.api_type, 
-                    b.api_function,
-                    b.api_path,
-                    b.auth_flag,
-                    b.api_remark
-                  FROM
-                    tbl_common_systemmenu a
-                  LEFT JOIN tbl_common_api b ON a.api_id = b.api_id
-                  WHERE a.parent_id = $1
-                  ORDER BY
-                    a.systemmenu_index `
-  const menus = await simpleSelect(queryStr, [parentId])
-  for (const m of menus) {
-    let sub_menus = []
+async function genMenu(parentId: string | number): Promise<any[]> {
+  const return_list: any[] = []
+  const pid = String(parentId)
+  const rows = await prisma.$queryRaw<
+    {
+      menu_id: number
+      menu_name: string
+      menu_icon: string
+      node_type: string
+      parent_id: string
+      api_type: string | null
+      api_function: string | null
+      api_path: string | null
+      auth_flag: string | null
+      api_remark: string | null
+    }[]
+  >`SELECT
+      a.menu_id,
+      a.menu_name,
+      a.menu_icon,
+      a.node_type,
+      a.parent_id,
+      b.api_type,
+      b.api_function,
+      b.api_path,
+      b.auth_flag,
+      b.api_remark
+    FROM tbl_common_system_menu a
+    LEFT JOIN tbl_common_api b ON a.api_id = b.api_id
+    WHERE a.parent_id = ${pid} AND a.state = '1'
+    ORDER BY a.menu_index`
+
+  for (const m of rows) {
+    let sub_menus: any[] = []
     if (m.node_type === GLBConfig.NODE_TYPE.NODE_ROOT) {
-      sub_menus = await genMenu(m.systemmenu_id)
+      sub_menus = await genMenu(m.menu_id)
       return_list.push({
-        name: m.systemmenu_name,
-        systemmenu_id: m.systemmenu_id,
-        systemmenu_name: m.systemmenu_name,
-        systemmenu_icon: m.systemmenu_icon,
+        name: m.menu_name,
+        menu_id: m.menu_id,
+        menu_name: m.menu_name,
+        menu_icon: m.menu_icon,
         node_type: m.node_type,
         parent_id: m.parent_id,
         children: sub_menus,
@@ -67,15 +75,14 @@ async function genMenu(parentId: string): Promise<any> {
     } else {
       let name = ''
       if (m.api_function) {
-        name = m.systemmenu_name + '->' + m.api_function
+        name = m.menu_name + '->' + m.api_function
       } else {
-        name = m.systemmenu_name
+        name = m.menu_name
       }
       return_list.push({
-        name: name,
-        systemmenu_id: m.systemmenu_id,
-        systemmenu_name: m.systemmenu_name,
-        api_id: m.api_id,
+        name,
+        menu_id: m.menu_id,
+        menu_name: m.menu_name,
         api_type: m.api_type,
         api_path: m.api_path,
         api_function: m.api_function,
@@ -91,19 +98,22 @@ async function genMenu(parentId: string): Promise<any> {
 
 async function addFolderAct(req: Request) {
   const doc = common.docValidate(req)
-  const folder = await common_systemmenu.findOneBy({
-      systemmenu_name: doc.systemmenu_name,
+  const folder = await prisma.common_system_menu.findFirst({
+    where: { menu_name: doc.menu_name, state: GLBConfig.ENABLE },
   })
 
   if (folder) {
     return common.error('common_api_01')
   } else {
-    await common_systemmenu.create({
-      systemmenu_name: doc.systemmenu_name,
-      systemmenu_icon: doc.systemmenu_icon,
-      node_type: '00', //NODETYPEINFO
-      parent_id: doc.parent_id,
-    }).save()
+    await prisma.common_system_menu.create({
+      data: {
+        menu_name: doc.menu_name,
+        menu_icon: doc.menu_icon ?? '',
+        node_type: '00',
+        parent_id: String(doc.parent_id ?? '0'),
+        state: GLBConfig.ENABLE,
+      },
+    })
 
     return common.success()
   }
@@ -112,14 +122,18 @@ async function addFolderAct(req: Request) {
 async function modifyFolderAct(req: Request) {
   const doc = common.docValidate(req)
 
-  const folder = await common_systemmenu.findOneBy({
-    systemmenu_id: doc.systemmenu_id,
+  const folder = await prisma.common_system_menu.findFirst({
+    where: { menu_id: doc.menu_id, state: GLBConfig.ENABLE },
   })
 
   if (folder) {
-    folder.systemmenu_name = doc.systemmenu_name
-    folder.systemmenu_icon = doc.systemmenu_icon
-    await folder.save()
+    await prisma.common_system_menu.update({
+      where: { menu_id: folder.menu_id },
+      data: {
+        menu_name: doc.menu_name,
+        menu_icon: doc.menu_icon ?? '',
+      },
+    })
   } else {
     return common.error('common_api_02')
   }
@@ -130,26 +144,26 @@ async function modifyFolderAct(req: Request) {
 async function addMenuAct(req: Request) {
   const doc = common.docValidate(req)
 
-  const afolder = await common_systemmenu.findOneBy({
-    systemmenu_name: doc.systemmenu_name,
+  const afolder = await prisma.common_system_menu.findFirst({
+    where: { menu_name: doc.menu_name, state: GLBConfig.ENABLE },
   })
 
-  const aapi = await common_api.findOneBy({
-    api_name: doc.systemmenu_name,
+  const aapi = await prisma.common_api.findFirst({
+    where: { api_name: doc.menu_name, state: GLBConfig.ENABLE },
   })
 
   let afunc = null
   if (doc.api_function) {
-    afunc = await common_api.findOneBy({
-      api_function: doc.api_function,
+    afunc = await prisma.common_api.findFirst({
+      where: { api_function: doc.api_function.toUpperCase(), state: GLBConfig.ENABLE },
     })
   }
   if (afolder || aapi || afunc) {
     return common.error('common_api_01')
   } else {
-    let api_path = '',
-      api_function = '',
-      auth_flag = ''
+    let api_path = ''
+    let api_function = ''
+    let auth_flag = ''
     if (doc.api_type === '0') {
       api_path = doc.api_path
       api_function = doc.api_function.toUpperCase()
@@ -161,20 +175,28 @@ async function addMenuAct(req: Request) {
       auth_flag = doc.auth_flag
     }
 
-    const api = await common_api.create({
-      api_name: doc.systemmenu_name,
-      api_type: doc.api_type,
-      api_path: api_path,
-      api_function: api_function,
-      auth_flag: auth_flag,
-    }).save()
+    await prisma.$transaction(async (tx) => {
+      const api = await tx.common_api.create({
+        data: {
+          api_name: doc.menu_name,
+          api_type: doc.api_type,
+          api_path,
+          api_function,
+          auth_flag,
+          state: GLBConfig.ENABLE,
+        },
+      })
 
-    await common_systemmenu.create({
-      systemmenu_name: doc.systemmenu_name,
-      api_id: api.api_id,
-      node_type: '01', //NODETYPEINFO
-      parent_id: doc.parent_id,
-    }).save()
+      await tx.common_system_menu.create({
+        data: {
+          menu_name: doc.menu_name,
+          api_id: api.api_id,
+          node_type: '01',
+          parent_id: String(doc.parent_id ?? '0'),
+          state: GLBConfig.ENABLE,
+        },
+      })
+    })
 
     await refreshRedis.refreshRedis()
   }
@@ -185,36 +207,56 @@ async function addMenuAct(req: Request) {
 async function modifyMenuAct(req: Request) {
   const doc = common.docValidate(req)
 
-  const menum = await common_systemmenu.findOneBy({
-    systemmenu_id: doc.systemmenu_id,
+  const menum = await prisma.common_system_menu.findFirst({
+    where: { menu_id: doc.menu_id, state: GLBConfig.ENABLE },
   })
 
   if (menum) {
-    const api = await common_api.findOneBy({
-      api_id: menum.api_id,
-    })
+    const api = menum.api_id
+      ? await prisma.common_api.findFirst({
+          where: { api_id: menum.api_id, state: GLBConfig.ENABLE },
+        })
+      : null
 
-    const orCond: { [index: string]: any }[] = [
-      { api_name: doc.systemmenu_name, api_id: Not(menum.api_id) },
-    ]
+    const conflictByName = await prisma.common_api.findFirst({
+      where: {
+        api_name: doc.systemmenu_name,
+        state: GLBConfig.ENABLE,
+        ...(menum.api_id != null ? { NOT: { api_id: menum.api_id } } : {}),
+      },
+    })
+    if (conflictByName) {
+      return common.error('common_api_01')
+    }
     if (doc.api_function) {
-      orCond.push({ api_function: doc.api_function, api_id: Not(menum.api_id) })
+      const conflictByFunc = await prisma.common_api.findFirst({
+        where: {
+          api_function: doc.api_function.toUpperCase(),
+          state: GLBConfig.ENABLE,
+          ...(menum.api_id != null ? { NOT: { api_id: menum.api_id } } : {}),
+        },
+      })
+      if (conflictByFunc) {
+        return common.error('common_api_01')
+      }
     }
     if (doc.api_path) {
-      orCond.push({ api_path: doc.api_path, api_id: Not(menum.api_id) })
-    }
-
-    const aapi = await common_api.findOne({
-      where: orCond,
-    })
-    if (aapi) {
-      return common.error('common_api_01')
+      const conflictByPath = await prisma.common_api.findFirst({
+        where: {
+          api_path: doc.api_path,
+          state: GLBConfig.ENABLE,
+          ...(menum.api_id != null ? { NOT: { api_id: menum.api_id } } : {}),
+        },
+      })
+      if (conflictByPath) {
+        return common.error('common_api_01')
+      }
     }
 
     if (api) {
-      let api_path = '',
-        api_function = '',
-        auth_flag = ''
+      let api_path = ''
+      let api_function = ''
+      let auth_flag = ''
       if (doc.api_type === '0') {
         api_path = doc.api_path
         api_function = doc.api_function.toUpperCase()
@@ -226,14 +268,20 @@ async function modifyMenuAct(req: Request) {
         auth_flag = doc.auth_flag
       }
 
-      api.api_type = doc.api_type
-      api.api_name = doc.systemmenu_name
-      api.api_path = api_path
-      api.api_function = api_function
-      api.auth_flag = auth_flag
-      await api.save()
-      menum.systemmenu_name = doc.systemmenu_name
-      await menum.save()
+      await prisma.common_api.update({
+        where: { api_id: api.api_id },
+        data: {
+          api_type: doc.api_type,
+          api_name: doc.menu_name,
+          api_path,
+          api_function,
+          auth_flag,
+        },
+      })
+      await prisma.common_system_menu.update({
+        where: { menu_id: menum.menu_id },
+        data: { menu_name: doc.menu_name },
+      })
       await refreshRedis.refreshRedis()
     } else {
       return common.error('common_api_02')
@@ -247,42 +295,44 @@ async function modifyMenuAct(req: Request) {
 
 async function removeAct(req: Request) {
   const doc = common.docValidate(req)
-  const menum = await common_systemmenu.findOneBy({
-    systemmenu_id: doc.systemmenu_id,
+  const menum = await prisma.common_system_menu.findFirst({
+    where: { menu_id: doc.menu_id, state: GLBConfig.ENABLE },
   })
 
-  const groups = await common_usergroup.findBy({
-    organization_id: 0,
+  const groups = await prisma.common_group.findMany({
+    where: { state: GLBConfig.ENABLE },
+    select: { group_id: true },
   })
 
-  const gids = []
-  for (const g of groups) {
-    gids.push(g.usergroup_id)
-  }
+  const gids = groups.map((g) => g.group_id)
 
   if (menum) {
     if (menum.node_type === '01') {
       if (gids.length > 0) {
-        await common_usergroupmenu.delete({
-          usergroup_id: In(gids),
-          menu_id: menum.systemmenu_id,
+        await prisma.common_group_menu.deleteMany({
+          where: {
+            group_id: { in: gids },
+            menu_id: menum.menu_id,
+          },
         })
       }
 
-      await common_systemmenu.delete({
-        systemmenu_id: menum.systemmenu_id,
+      await prisma.common_system_menu.delete({
+        where: { menu_id: menum.menu_id },
       })
 
       if (menum.api_id) {
-        await common_api.delete({
-          api_id: menum.api_id,
+        await prisma.common_api.delete({
+          where: { api_id: menum.api_id },
         })
       }
+      await refreshRedis.refreshRedis()
       return common.success()
     } else {
-      const chcount = await common_systemmenu.count({
+      const chcount = await prisma.common_system_menu.count({
         where: {
-          parent_id: doc.systemmenu_id,
+          parent_id: String(doc.menu_id),
+          state: GLBConfig.ENABLE,
         },
       })
       if (chcount > 0) {
@@ -290,19 +340,23 @@ async function removeAct(req: Request) {
       }
 
       if (gids.length > 0) {
-        await common_usergroupmenu.delete({
-          usergroup_id: In(gids),
-          menu_id: menum.systemmenu_id,
+        await prisma.common_group_menu.deleteMany({
+          where: {
+            group_id: { in: gids },
+            menu_id: menum.menu_id,
+          },
         })
       }
 
-      await common_systemmenu.delete({
-        systemmenu_id: menum.systemmenu_id,
+      await prisma.common_system_menu.delete({
+        where: { menu_id: menum.menu_id },
       })
 
+      await refreshRedis.refreshRedis()
       return common.success()
     }
   }
+  return common.error('common_api_02')
 }
 
 export default {

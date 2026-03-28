@@ -1,21 +1,23 @@
 import { Request } from 'express'
 import common from '@/utils/Common'
 import GLBConfig from '@/utils/GLBConfig'
-import { common_user } from '@entities/common'
-import { createLogger } from '@app/logger'
+import { prisma } from '@/utils/DB'
+import { createLogger } from '@logger'
+
 const logger = createLogger(__filename)
 
 async function changePasswordAct(req: Request) {
   const doc = common.docValidate(req)
   const user = req.user
+  if (!user?.user_id) {
+    return common.error('common_api_02')
+  }
 
-  const modiuser = await common_user.findOne({
+  const modiuser = await prisma.common_user.findFirst({
     where: {
       user_id: user.user_id,
-      base: {
-        state: GLBConfig.ENABLE
-      }
-    }
+      state: GLBConfig.ENABLE,
+    },
   })
 
   if (modiuser) {
@@ -23,8 +25,10 @@ async function changePasswordAct(req: Request) {
       return common.error('usersetting_01')
     }
 
-    modiuser.user_password = doc.password
-    await modiuser.save()
+    await prisma.common_user.update({
+      where: { user_id: modiuser.user_id },
+      data: { user_password: doc.password },
+    })
     logger.debug('modisuccess')
     return common.success()
   } else {
@@ -33,5 +37,5 @@ async function changePasswordAct(req: Request) {
 }
 
 export default {
-  changePasswordAct
+  changePasswordAct,
 }

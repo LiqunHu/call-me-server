@@ -1,34 +1,25 @@
-import { Not } from 'typeorm'
 import { Request } from 'express'
-import _ from 'lodash'
 import common from '@/utils/Common'
 import GLBConfig from '@/utils/GLBConfig'
-import { common_user } from '@entities/common'
-import { createLogger } from '@app/logger'
+import { prisma } from '@/utils/DB'
+import { createLogger } from '@logger'
+
 const logger = createLogger(__filename)
 
 async function searchAct(req: Request) {
   const doc = common.docValidate(req)
 
-  const user = await common_user.findOne({
-    where: [
-      {
-        user_phone: doc.search_text,
-        user_type: Not(GLBConfig.USER_TYPE.TYPE_ADMINISTRATOR)
-      },
-      {
-        user_username: doc.search_text,
-        user_type: Not(GLBConfig.USER_TYPE.TYPE_ADMINISTRATOR)
-      },
-      {
-        user_email: doc.search_text,
-        user_type: Not(GLBConfig.USER_TYPE.TYPE_ADMINISTRATOR)
-      },
-      {
-        user_account: doc.search_text,
-        user_type: Not(GLBConfig.USER_TYPE.TYPE_ADMINISTRATOR)
-      }
-    ]
+  const user = await prisma.common_user.findFirst({
+    where: {
+      state: GLBConfig.ENABLE,
+      user_type: { not: GLBConfig.USER_TYPE.TYPE_ADMINISTRATOR },
+      OR: [
+        { user_phone: doc.search_text },
+        { user_username: doc.search_text },
+        { user_email: doc.search_text },
+        { user_account: doc.search_text },
+      ],
+    },
   })
 
   if (user) {
@@ -43,18 +34,22 @@ async function searchAct(req: Request) {
 async function resetAct(req: Request) {
   const doc = common.docValidate(req)
 
-  const user = await common_user.findOneBy({
-    user_id: doc.user_id,
-    base: {
+  const user = await prisma.common_user.findFirst({
+    where: {
+      user_id: doc.user_id,
       updated_at: doc.updated_at,
-      version: doc.version
-    }
+      state: GLBConfig.ENABLE,
+    },
   })
 
   if (user) {
-    user.user_password = GLBConfig.INITPASSWORD
-    user.user_password_error = 0
-    await user.save()
+    await prisma.common_user.update({
+      where: { user_id: user.user_id },
+      data: {
+        user_password: GLBConfig.INITPASSWORD,
+        user_password_error: 0,
+      },
+    })
     logger.debug('modisuccess')
     return common.success()
   } else {
@@ -64,5 +59,5 @@ async function resetAct(req: Request) {
 
 export default {
   searchAct,
-  resetAct
+  resetAct,
 }

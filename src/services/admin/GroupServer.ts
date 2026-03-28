@@ -1,18 +1,14 @@
 import { Request } from 'express'
 import common from '@/utils/Common'
 import GLBConfig from '@/utils/GLBConfig'
-import { simpleSelect } from '@/utils/DB'
-import {
-  common_usergroup,
-  common_usergroupmenu,
-  common_user_groups
-} from '@entities/common'
-import { createLogger } from '@app/logger'
+import { prisma } from '@/utils/DB'
+import { createLogger } from '@logger'
+
 const logger = createLogger(__filename)
 
 interface menuItem {
-  systemmenu_id: number
-  systemmenu_name?: string
+  menu_id: number
+  menu_name?: string
   node_type: string
   name: string
   parent_flag: boolean
@@ -22,63 +18,73 @@ interface menuItem {
   parent_id?: number
   children?: menuItem[]
 }
+
 async function initAct() {
   const returnData = Object.create(null)
 
-  returnData.menuInfo = [
-    {
-      systemmenu_id: 0,
-      name: 'Root',
-      parent_flag: true,
-      title: 'Root',
-      expand: true,
-      node_type: GLBConfig.NODE_TYPE.NODE_ROOT,
-      children: []
-    }
-  ]
+  const rootMenu: menuItem = {
+    menu_id: 0,
+    name: 'Root',
+    parent_flag: true,
+    title: 'Root',
+    expand: true,
+    node_type: GLBConfig.NODE_TYPE.NODE_ROOT,
+    children: [],
+  }
+  returnData.menuInfo = [rootMenu]
 
-  returnData.menuInfo[0].children = await genMenu('0')
+  rootMenu.children = await genMenu('0')
   return common.success(returnData)
 }
 
-async function genMenu(parentId: number | string): Promise<menuItem[]> {
+async function genMenu(parentId: string | number): Promise<menuItem[]> {
   const return_list: menuItem[] = []
-  const queryStr = `SELECT
-                    a.*, b.api_type, 
-                    b.api_function
-                  FROM
-                    tbl_common_systemmenu a  
-                  LEFT JOIN tbl_common_api b ON a.api_id = b.api_id
-                  WHERE a.parent_id = $1
-                  ORDER BY
-                    a.systemmenu_index`
-  const menus = await simpleSelect(queryStr, [parentId])
+  const pid = String(parentId)
+  const menus = await prisma.$queryRaw<
+    {
+      menu_id: number
+      menu_name: string
+      node_type: string
+      parent_id: string
+      api_type: string | null
+      api_function: string | null
+    }[]
+  >`SELECT
+      a.menu_id AS menu_id,
+      a.menu_name AS menu_name,
+      a.node_type,
+      a.parent_id,
+      b.api_type,
+      b.api_function
+    FROM tbl_common_system_menu a
+    LEFT JOIN tbl_common_api b ON a.api_id = b.api_id
+    WHERE a.parent_id = ${pid} AND a.state = '1'
+    ORDER BY a.menu_index`
 
   for (const m of menus) {
     let sub_menus: menuItem[] = []
     if (m.node_type === GLBConfig.NODE_TYPE.NODE_ROOT) {
-      sub_menus = await genMenu(m.systemmenu_id)
+      sub_menus = await genMenu(m.menu_id)
       return_list.push({
-        systemmenu_id: m.systemmenu_id,
-        systemmenu_name: m.systemmenu_name,
+        menu_id: m.menu_id,
+        menu_name: m.menu_name,
         node_type: m.node_type,
-        name: m.systemmenu_name,
+        name: m.menu_name,
         parent_flag: true,
-        title: m.systemmenu_name,
+        title: m.menu_name,
         expand: true,
-        parent_id: m.parent_id,
-        children: sub_menus
+        parent_id: Number(m.parent_id) || 0,
+        children: sub_menus,
       })
     } else {
       return_list.push({
-        systemmenu_id: m.systemmenu_id,
-        systemmenu_name: m.systemmenu_name,
-        api_id: m.api_id,
+        menu_id: m.menu_id,
+        menu_name: m.menu_name,
         node_type: m.node_type,
-        name: m.systemmenu_name + '->' + m.api_function,
-        title: m.systemmenu_name + '->' + m.api_function,
+        name: m.menu_name + '->' + (m.api_function ?? ''),
+        title: m.menu_name + '->' + (m.api_function ?? ''),
         parent_flag: false,
-        parent_id: m.parent_id
+        parent_id: Number(m.parent_id) || 0,
       })
     }
   }
@@ -86,52 +92,54 @@ async function genMenu(parentId: number | string): Promise<menuItem[]> {
 }
 
 async function searchAct() {
-  const groups = [
-    {
-      usergroup_id: 0,
-      name: 'Root',
-      parent_flag: true,
-      title: 'Root',
-      expand: true,
-      node_type: GLBConfig.NODE_TYPE.NODE_ROOT,
-      children: []
-    }
-  ]
-  groups[0].children = JSON.parse(JSON.stringify(await genUserGroup('0')))
-  return common.success(groups)
+  const root = {
+    group_id: 0,
+    name: 'Root',
+    parent_flag: true,
+    title: 'Root',
+    expand: true,
+    node_type: GLBConfig.NODE_TYPE.NODE_ROOT,
+    children: [] as any[],
+  }
+  root.children = JSON.parse(JSON.stringify(await genUserGroup('0')))
+  return common.success([root])
 }
-async function genUserGroup(parentId: string): Promise<any> {
-  const return_list = []
-  const groups = await common_usergroup.findBy({
-    parent_id: parentId,
-    organization_id: 0,
-    usergroup_type: GLBConfig.USER_TYPE.TYPE_DEFAULT
+
+async function genUserGroup(parentId: string): Promise<any[]> {
+  const return_list: any[] = []
+  const groups = await prisma.common_group.findMany({
+    where: {
+      parent_id: parentId,
+      group_type: GLBConfig.USER_TYPE.TYPE_DEFAULT,
+      state: GLBConfig.ENABLE,
+    },
+    orderBy: { group_id: 'asc' },
   })
   for (const g of groups) {
-    let sub_group = []
+    let sub_group: any[] = []
     if (g.node_type === GLBConfig.NODE_TYPE.NODE_ROOT) {
-      sub_group = await genUserGroup(g.usergroup_id + '')
+      sub_group = await genUserGroup(String(g.group_id))
       return_list.push({
-        usergroup_id: g.usergroup_id,
+        group_id: g.group_id,
         node_type: g.node_type,
-        usergroup_type: g.usergroup_type,
-        name: g.usergroup_name,
+        group_type: g.group_type,
+        name: g.group_name,
         parent_flag: true,
-        title: g.usergroup_name,
+        title: g.group_name,
         expand: true,
         parent_id: g.parent_id,
-        children: sub_group
+        children: sub_group,
       })
     } else {
       return_list.push({
-        usergroup_id: g.usergroup_id,
+        group_id: g.group_id,
         node_type: g.node_type,
-        usergroup_type: g.usergroup_type,
-        usergroup_code: g.usergroup_code,
-        name: g.usergroup_name,
-        title: g.usergroup_name,
+        group_type: g.group_type,
+        group_code: g.group_code,
+        name: g.group_name,
+        title: g.group_name,
         parent_flag: false,
-        parent_id: g.parent_id
+        parent_id: g.parent_id,
       })
     }
   }
@@ -143,10 +151,11 @@ async function getCheckAct(req: Request) {
   const returnData = Object.create(null)
   returnData.groupMenu = []
 
-  const groupmenus = await common_usergroupmenu.findBy({
-    usergroup_id: doc.usergroup_id
+  const menus = await prisma.common_group_menu.findMany({
+    where: { group_id: doc.group_id, state: GLBConfig.ENABLE },
+    select: { menu_id: true },
   })
-  for (const item of groupmenus) {
+  for (const item of menus) {
     returnData.groupMenu.push(item.menu_id)
   }
   return common.success(returnData)
@@ -156,65 +165,83 @@ async function addAct(req: Request) {
   const doc = common.docValidate(req)
 
   if (doc.node_type === '01') {
-    const gcode = await common_usergroup.findOneBy({
-      usergroup_code: doc.usergroup_code
+    const code = await prisma.common_group.findFirst({
+      where: { group_code: doc.group_code, state: GLBConfig.ENABLE },
     })
 
-    if (gcode) {
+    if (code) {
       return common.error('group_05')
     }
   }
 
-  const usergroup = await common_usergroup
-    .create({
-      organization_id: 0,
-      usergroup_code: doc.usergroup_code,
-      usergroup_name: doc.usergroup_name,
-      usergroup_type: GLBConfig.USER_TYPE.TYPE_DEFAULT,
+  const group = await prisma.common_group.create({
+    data: {
+      group_code: doc.group_code ?? '',
+      group_name: doc.group_name,
+      group_type: GLBConfig.USER_TYPE.TYPE_DEFAULT,
       node_type: doc.node_type,
-      parent_id: doc.parent_id
-    })
-    .save()
+      parent_id: String(doc.parent_id ?? '0'),
+    },
+  })
 
-  if (doc.node_type === '01') {
+  if (doc.node_type === '01' && Array.isArray(doc.menus)) {
     for (const m of doc.menus) {
-      await common_usergroupmenu
-        .create({
-          usergroup_id: usergroup.usergroup_id,
-          menu_id: m.menu_id
-        })
-        .save()
+      await prisma.common_group_menu.create({
+        data: {
+          group_id: group.group_id,
+          menu_id: m.menu_id,
+        },
+      })
     }
   }
 
-  return common.success(usergroup)
+  return common.success({
+    ...group,
+    group_id: group.group_id,
+    group_code: group.group_code,
+    group_name: group.group_name,
+    group_type: group.group_type,
+  })
 }
 
 async function modifyAct(req: Request) {
   const doc = common.docValidate(req)
-  const usergroup = await common_usergroup.findOneBy({
-    usergroup_id: doc.usergroup_id
+  const group = await prisma.common_group.findFirst({
+    where: { group_id: doc.group_id, state: GLBConfig.ENABLE },
   })
-  if (usergroup) {
-    usergroup.usergroup_name = doc.usergroup_name
-    await usergroup.save()
+  if (group) {
+    await prisma.common_group.update({
+      where: { group_id: group.group_id },
+      data: { group_name: doc.group_name },
+    })
 
-    if (usergroup.node_type === '01') {
-      await common_usergroupmenu.delete({
-        usergroup_id: doc.usergroup_id
+    if (group.node_type === '01') {
+      await prisma.common_group_menu.deleteMany({
+        where: { group_id: doc.group_id },
       })
 
-      for (const m of doc.menus) {
-        await common_usergroupmenu
-          .create({
-            usergroup_id: usergroup.usergroup_id,
-            menu_id: m.menu_id
+      if (Array.isArray(doc.menus)) {
+        for (const m of doc.menus) {
+          await prisma.common_group_menu.create({
+            data: {
+              group_id: group.group_id,
+              menu_id: m.menu_id,
+            },
           })
-          .save()
+        }
       }
     }
     logger.debug('modify success')
-    return common.success(usergroup)
+    const updated = await prisma.common_group.findFirst({
+      where: { group_id: group.group_id },
+    })
+    return common.success({
+      ...updated,
+      group_id: updated?.group_id,
+      group_code: updated?.group_code,
+      group_name: updated?.group_name,
+      group_type: updated?.group_type,
+    })
   } else {
     return common.error('group_02')
   }
@@ -222,33 +249,39 @@ async function modifyAct(req: Request) {
 
 async function removeAct(req: Request) {
   const doc = common.docValidate(req)
-  const usergroup = await common_usergroup.findOneBy({
-    usergroup_id: doc.usergroup_id
+  const group = await prisma.common_group.findFirst({
+    where: { group_id: doc.group_id, state: GLBConfig.ENABLE },
   })
 
-  if (usergroup) {
-    if (usergroup.node_type === '01') {
-      await common_user_groups.delete({
-        usergroup_id: usergroup.usergroup_id
-      })
+  if (!group) {
+    return common.error('group_02')
+  }
 
-      await common_usergroupmenu.delete({
-        usergroup_id: usergroup.usergroup_id
-      })
+  if (group.node_type === '01') {
+    await prisma.common_user_group.deleteMany({
+      where: { group_id: group.group_id },
+    })
 
-      await usergroup.remove()
-      return common.success()
-    } else {
-      const chcount = await common_usergroup.countBy({
-        parent_id: usergroup.usergroup_id + ''
-      })
+    await prisma.common_group_menu.deleteMany({
+      where: { group_id: group.group_id },
+    })
 
-      if (chcount > 0) {
-        return common.error('group_06')
-      }
-      await usergroup.remove()
-      return common.success()
+    await prisma.common_group.delete({
+      where: { group_id: group.group_id },
+    })
+    return common.success()
+  } else {
+    const check_count = await prisma.common_group.count({
+      where: { parent_id: String(group.group_id), state: GLBConfig.ENABLE },
+    })
+
+    if (check_count > 0) {
+      return common.error('group_06')
     }
+    await prisma.common_group.delete({
+      where: { group_id: group.group_id },
+    })
+    return common.success()
   }
 }
 
@@ -258,5 +291,5 @@ export default {
   getCheckAct,
   addAct,
   modifyAct,
-  removeAct
+  removeAct,
 }

@@ -15,8 +15,7 @@ export async function closeDB() {
 }
 
 export async function simpleSelect(queryStr: string, replacements?: any[]) {
-  const result = await prisma.$queryRawUnsafe(queryStr, replacements)
-  return result
+  return prisma.$queryRawUnsafe(queryStr, ...(replacements ?? []))
 }
 
 interface pageInfo {
@@ -36,14 +35,14 @@ export async function queryWithCount(pageDoc: pageInfo, queryStr: string, replac
     }
     queryStrCnt = 'select count(1) num from ' + queryStr.slice(start, end)
   }
-  const count: any = await prisma.$queryRawUnsafe(queryStrCnt, replacements)
+  const count: any = await prisma.$queryRawUnsafe(queryStrCnt, ...(replacements ?? []))
 
-  const rep = replacements || []
+  const rep = [...(replacements ?? [])]
   const index = rep.length
   rep.push(pageDoc.offset || 0)
   rep.push(pageDoc.limit || 100)
 
-  const queryRst = await prisma.$queryRawUnsafe(queryStr + ` offset $${index + 1} limit $${index + 2}`, rep)
+  const queryRst = await prisma.$queryRawUnsafe(queryStr + ` offset $${index + 1} limit $${index + 2}`, ...rep)
 
   return {
     count: count[0].num,

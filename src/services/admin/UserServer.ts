@@ -1,16 +1,10 @@
-import { Not } from 'typeorm'
 import { Request } from 'express'
-import { redisClient } from 'node-srv-utils'
 import common from '@/utils/Common'
 import GLBConfig from '@/utils/GLBConfig'
-import { simpleSelect, queryWithCount } from '@/utils/DB'
+import { prisma, queryWithCount } from '@/utils/DB'
+import redisClient from '@/utils/RedisClient'
+import { createLogger } from '@logger'
 
-import {
-  common_user,
-  common_usergroup,
-  common_user_groups
-} from '@entities/common'
-import { createLogger } from '@app/logger'
 const logger = createLogger(__filename)
 
 async function initAct() {
@@ -23,24 +17,27 @@ async function initAct() {
   }[] = []
 
   async function genUserGroup(parentId: string, lev: number) {
-    const actgroups = await common_usergroup.findBy({
-      parent_id: parentId,
-      usergroup_type: GLBConfig.USER_TYPE.TYPE_DEFAULT,
-      organization_id: 0
+    const actgroups = await prisma.common_group.findMany({
+      where: {
+        parent_id: parentId,
+        group_type: GLBConfig.USER_TYPE.TYPE_DEFAULT,
+        state: GLBConfig.ENABLE,
+      },
+      orderBy: { group_id: 'asc' },
     })
     for (const g of actgroups) {
       if (g.node_type === GLBConfig.NODE_TYPE.NODE_ROOT) {
         groups.push({
-          id: g.usergroup_id,
-          text: '--'.repeat(lev) + g.usergroup_name,
-          disabled: true
+          id: g.group_id,
+          text: '--'.repeat(lev) + g.group_name,
+          disabled: true,
         })
-        await genUserGroup(g.usergroup_id + '', lev + 1)
+        await genUserGroup(String(g.group_id), lev + 1)
       } else {
         groups.push({
-          id: g.usergroup_id,
-          text: '--'.repeat(lev) + g.usergroup_name,
-          disabled: false
+          id: g.group_id,
+          text: '--'.repeat(lev) + g.group_name,
+          disabled: false,
         })
       }
     }
@@ -53,21 +50,16 @@ async function initAct() {
 }
 
 async function searchAct(req: Request) {
-  const doc = common.docValidate(req),
-    returnData = Object.create(null)
+  const doc = common.docValidate(req)
+  const returnData = Object.create(null)
 
   let queryStr = `select * from tbl_common_user where state = '1' and user_type = '${GLBConfig.USER_TYPE.TYPE_DEFAULT}' `
-  const replacements = []
+  const replacements: any[] = []
 
   if (doc.search_text) {
     queryStr += ` and (user_username like $1 or user_email like $2 or user_phone like $3 or user_name like $4 or user_address like $5 or user_account like $6)`
     const search_text = '%' + doc.search_text + '%'
-    replacements.push(search_text)
-    replacements.push(search_text)
-    replacements.push(search_text)
-    replacements.push(search_text)
-    replacements.push(search_text)
-    replacements.push(search_text)
+    replacements.push(search_text, search_text, search_text, search_text, search_text, search_text)
   }
 
   const result = await queryWithCount(doc, queryStr, replacements)
@@ -75,13 +67,14 @@ async function searchAct(req: Request) {
   returnData.total = result.count
   returnData.rows = []
 
-  for (const ap of result.data) {
+  for (const ap of result.data as any[]) {
     ap.user_groups = []
-    const user_groups = await common_user_groups.findBy({
-      user_id: ap.user_id
+    const user_groups = await prisma.common_user_group.findMany({
+      where: { user_id: ap.user_id, state: GLBConfig.ENABLE },
+      select: { group_id: true },
     })
     for (const g of user_groups) {
-      ap.user_groups.push(g.usergroup_id)
+      ap.user_groups.push(g.group_id)
     }
     delete ap.user_password
     returnData.rows.push(ap)
@@ -95,8 +88,8 @@ async function addAct(req: Request) {
   let groupCheckFlag = true
 
   for (const gid of doc.user_groups) {
-    const usergroup = await common_usergroup.findOneBy({
-      usergroup_id: gid
+    const usergroup = await prisma.common_group.findFirst({
+      where: { group_id: gid, state: GLBConfig.ENABLE },
     })
     if (!usergroup) {
       groupCheckFlag = false
@@ -105,17 +98,17 @@ async function addAct(req: Request) {
   }
 
   if (groupCheckFlag) {
-    let adduser = await common_user.findOne({
-      where: [
-        { user_phone: doc.user_phone },
-        { user_username: doc.user_username }
-      ]
+    const adduser = await prisma.common_user.findFirst({
+      where: {
+        state: GLBConfig.ENABLE,
+        OR: [{ user_phone: doc.user_phone }, { user_username: doc.user_username }],
+      },
     })
     if (adduser) {
       return common.error('operator_02')
     }
-    adduser = await common_user
-      .create({
+    const created = await prisma.common_user.create({
+      data: {
         user_type: GLBConfig.USER_TYPE.TYPE_DEFAULT,
         user_username: doc.user_username,
         user_email: doc.user_email,
@@ -124,20 +117,22 @@ async function addAct(req: Request) {
         user_name: doc.user_name,
         user_gender: doc.user_gender,
         user_address: doc.user_address,
-        user_zipcode: doc.user_zipcode
-      })
-      .save()
+        user_zipcode: doc.user_zipcode,
+        state: GLBConfig.ENABLE,
+      },
+    })
 
     for (const gid of doc.user_groups) {
-      await common_user_groups
-        .create({
-          user_id: adduser.user_id,
-          usergroup_id: gid
-        })
-        .save()
+      await prisma.common_user_group.create({
+        data: {
+          user_id: created.user_id,
+          group_id: gid,
+          state: GLBConfig.ENABLE,
+        },
+      })
     }
 
-    const returnData = JSON.parse(JSON.stringify(adduser))
+    const returnData = JSON.parse(JSON.stringify(created))
     delete returnData.user_password
     returnData.user_groups = doc.user_groups
 
@@ -150,17 +145,17 @@ async function addAct(req: Request) {
 async function modifyAct(req: Request) {
   const doc = common.docValidate(req)
 
-  const modiuser = await common_user.findOneBy({
-    user_id: doc.user_id,
-    base: {
-      state: GLBConfig.ENABLE
-    }
+  const modiuser = await prisma.common_user.findFirst({
+    where: { user_id: doc.user_id, state: GLBConfig.ENABLE },
   })
   if (modiuser) {
     if (doc.user_email) {
-      const emailuser = await common_user.findOneBy({
-        user_id: Not(modiuser.user_id),
-        user_email: doc.user_email
+      const emailuser = await prisma.common_user.findFirst({
+        where: {
+          user_email: doc.user_email,
+          user_id: { not: modiuser.user_id },
+          state: GLBConfig.ENABLE,
+        },
       })
       if (emailuser) {
         return common.error('operator_02')
@@ -168,58 +163,61 @@ async function modifyAct(req: Request) {
     }
 
     if (doc.user_phone) {
-      const phoneuser = await common_user.findOneBy({
-        user_id: Not(modiuser.user_id),
-        user_phone: doc.user_phone
+      const phoneuser = await prisma.common_user.findFirst({
+        where: {
+          user_phone: doc.user_phone,
+          user_id: { not: modiuser.user_id },
+          state: GLBConfig.ENABLE,
+        },
       })
       if (phoneuser) {
         return common.error('operator_02')
       }
     }
 
-    modiuser.user_email = doc.user_email
-    modiuser.user_phone = doc.user_phone
-    modiuser.user_name = doc.user_name
-    modiuser.user_gender = doc.user_gender
-    modiuser.user_avatar = doc.user_avatar
-    modiuser.user_address = doc.user_address
-    modiuser.user_zipcode = doc.user_zipcode
-    await modiuser.save()
+    await prisma.common_user.update({
+      where: { user_id: modiuser.user_id },
+      data: {
+        user_email: doc.user_email,
+        user_phone: doc.user_phone,
+        user_name: doc.user_name,
+        user_gender: doc.user_gender,
+        user_avatar: doc.user_avatar,
+        user_address: doc.user_address,
+        user_zipcode: doc.user_zipcode,
+      },
+    })
 
-    const queryStr = `SELECT
-        a.user_groups_id,
-        a.usergroup_id 
-      FROM
-        tbl_common_user_groups a,
-        tbl_common_usergroup b 
-      WHERE
-        a.usergroup_id = b.usergroup_id 
-        AND b.organization_id = 0 
-        AND a.user_id = $1 `
-    const groups = await simpleSelect(queryStr, [modiuser.user_id])
-    const existids = []
-    for (const g of groups) {
-      if (doc.user_groups.indexOf(g.usergroup_id) < 0) {
-        await common_user_groups.delete({
-          user_groups_id: g.user_groups_id
+    const links = await prisma.common_user_group.findMany({
+      where: { user_id: modiuser.user_id, state: GLBConfig.ENABLE },
+    })
+    const existids: number[] = []
+    for (const g of links) {
+      if (doc.user_groups.indexOf(g.group_id) < 0) {
+        await prisma.common_user_group.delete({
+          where: { user_group_id: g.user_group_id },
         })
       } else {
-        existids.push(g.usergroup_id)
+        existids.push(g.group_id)
       }
     }
 
     for (const gid of doc.user_groups) {
       if (existids.indexOf(gid) < 0) {
-        await common_user_groups
-          .create({
+        await prisma.common_user_group.create({
+          data: {
             user_id: modiuser.user_id,
-            usergroup_id: gid
-          })
-          .save()
+            group_id: gid,
+            state: GLBConfig.ENABLE,
+          },
+        })
       }
     }
 
-    const returnData = JSON.parse(JSON.stringify(modiuser))
+    const fresh = await prisma.common_user.findFirst({
+      where: { user_id: modiuser.user_id },
+    })
+    const returnData = JSON.parse(JSON.stringify(fresh))
     delete returnData.user_password
     returnData.user_groups = doc.user_groups
     logger.debug('modify success')
@@ -232,22 +230,17 @@ async function modifyAct(req: Request) {
 async function deleteAct(req: Request) {
   const doc = common.docValidate(req)
 
-  const deluser = await common_user.findOneBy({
-    user_id: doc.user_id,
-    base: {
-      state: GLBConfig.ENABLE
-    }
+  const deluser = await prisma.common_user.findFirst({
+    where: { user_id: doc.user_id, state: GLBConfig.ENABLE },
   })
 
   if (deluser) {
-    deluser.base.state = GLBConfig.DISABLE
-    await deluser.save()
-    redisClient.del(
-      [GLBConfig.REDIS_KEYS.AUTH, 'WEB', deluser.user_id].join('_')
-    )
-    redisClient.del(
-      [GLBConfig.REDIS_KEYS.AUTH, 'MOBILE', deluser.user_id].join('_')
-    )
+    await prisma.common_user.update({
+      where: { user_id: deluser.user_id },
+      data: { state: GLBConfig.DISABLE },
+    })
+    await redisClient.del([GLBConfig.REDIS_KEYS.AUTH, 'WEB', deluser.user_id].join('_'))
+    await redisClient.del([GLBConfig.REDIS_KEYS.AUTH, 'MOBILE', deluser.user_id].join('_'))
     return common.success()
   } else {
     return common.error('operator_03')
@@ -259,5 +252,5 @@ export default {
   searchAct,
   addAct,
   modifyAct,
-  deleteAct
+  deleteAct,
 }

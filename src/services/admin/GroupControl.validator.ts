@@ -27,7 +27,7 @@ export default {
       type: 'post',
       JoiSchema: {
         body: {
-          usergroup_id: Joi.number().integer().required(),
+          group_id: Joi.number().integer().required(),
         },
       },
     },
@@ -39,10 +39,10 @@ export default {
       type: 'post',
       JoiSchema: {
         body: {
-          usergroup_name: Joi.string().empty('').max(50),
+          group_name: Joi.string().empty('').max(50),
           node_type: Joi.string().max(2),
           parent_id: Joi.number().integer(),
-          usergroup_code: Joi.string().max(20),
+          group_code: Joi.string().max(20),
           menus: Joi.array().items(
             Joi.object().keys({
               menu_id: Joi.number().integer(),
@@ -59,9 +59,9 @@ export default {
       type: 'post',
       JoiSchema: {
         body: {
-          usergroup_id: Joi.number().integer().required(),
-          usergroup_code: Joi.string().max(20),
-          usergroup_name: Joi.string().empty('').max(50),
+          group_id: Joi.number().integer().required(),
+          group_code: Joi.string().max(20),
+          group_name: Joi.string().empty('').max(50),
           menus: Joi.array().items(
             Joi.object().keys({
               menu_id: Joi.number().integer(),
@@ -78,7 +78,7 @@ export default {
       type: 'post',
       JoiSchema: {
         body: {
-          usergroup_id: Joi.number().integer().required(),
+          group_id: Joi.number().integer().required(),
         },
       },
     },

@@ -28,8 +28,8 @@ export default {
       JoiSchema: {
         body: {
           parent_id: Joi.number().integer(),
-          systemmenu_icon: Joi.string().max(50),
-          systemmenu_name: Joi.string().max(50),
+          menu_icon: Joi.string().max(50),
+          menu_name: Joi.string().max(50),
         },
       },
     },
@@ -41,9 +41,9 @@ export default {
       type: 'post',
       JoiSchema: {
         body: {
-          systemmenu_id: Joi.number().integer(),
-          systemmenu_icon: Joi.string().max(50),
-          systemmenu_name: Joi.string().max(50),
+          menu_id: Joi.number().integer(),
+          menu_icon: Joi.string().max(50),
+          menu_name: Joi.string().max(50),
         },
       },
     },
@@ -61,7 +61,7 @@ export default {
           api_function: Joi.string().empty('').max(100),
           auth_flag: Joi.string().empty('').max(10),
           api_remark: Joi.string().empty('').max(500),
-          systemmenu_name: Joi.string().max(300),
+          menu_name: Joi.string().max(300),
         },
       },
     },
@@ -73,13 +73,13 @@ export default {
       type: 'post',
       JoiSchema: {
         body: {
-          systemmenu_id: Joi.number().integer(),
+          menu_id: Joi.number().integer(),
           api_type: Joi.string().max(10),
           api_path: Joi.string().empty('').max(300),
           api_function: Joi.string().empty('').max(100),
           auth_flag: Joi.string().empty('').max(10),
           api_remark: Joi.string().empty('').max(500),
-          systemmenu_name: Joi.string().max(300),
+          menu_name: Joi.string().max(300),
         },
       },
     },
@@ -91,7 +91,7 @@ export default {
       type: 'post',
       JoiSchema: {
         body: {
-          systemmenu_id: Joi.number().integer(),
+          menu_id: Joi.number().integer(),
         },
       },
     },
