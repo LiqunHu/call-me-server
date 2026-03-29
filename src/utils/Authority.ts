@@ -1,15 +1,15 @@
 import { webcrypto } from 'crypto'
-import { Request, Response, NextFunction } from 'express'
+import e, { Request, Response, NextFunction } from 'express'
 import { sign, verify } from 'jsonwebtoken'
 import { createLogger } from '@logger'
 import redisClient from '@utils/RedisClient'
+import { prisma } from '@utils/DB'
 
 const logger = createLogger(__filename)
 
 export function getExpireTime(): number {
   return parseInt(process.env.TOKEN_AGE || '0') || 43200
 }
-
 
 export function user2token(type: string, userId: string): string {
   try {
@@ -81,21 +81,6 @@ async function token2user(req: Request) {
       let paths = req.path.split('/') || []
       let method = paths.at(paths.length - 2)?.toUpperCase()
       if (typeof method === 'string') {
-        // if (
-        //   config.syslogFlag &&
-        //   func !== 'AUTH' &&
-        //   method !== 'init' &&
-        //   method !== 'search' &&
-        //   method.search(/search/i) < 0
-        // ) {
-        //   tb_common_userlog.create({
-        //     user_id: user.user_id,
-        //     api_function: func,
-        //     userlog_method: method,
-        //     userlog_para: JSON.stringify(req.body)
-        //   })
-        // }
-
         let apiList = authData.authApis
 
         //auth control
@@ -107,6 +92,8 @@ async function token2user(req: Request) {
         if (method in apis) {
           return
         }
+
+        throw new Error('MethodNotAuthorized')
       }
     } else {
       throw new Error('AuthDataNotExist')
@@ -150,58 +137,84 @@ export async function AuthMiddleware(req: Request, res: Response, next: NextFunc
     if (req.method === 'POST') {
       let apis = await redisClient.get('AUTHAPI')
       if (apis === null) {
-        let apiList = await dbh(`select api_function, auth_flag from tbl_common_api where state = '1' and api_function != ''`, [])
+        const apiList = await prisma.common_api.findMany({
+          where: {
+            state: '1',
+            api_function: { not: '' },
+          },
+          select: { api_function: true, auth_flag: true },
+        })
 
         for (let a of apiList) {
           apis[a.api_function] = a.auth_flag
         }
       }
 
-      let patha = req.path.split('/')
-      let func = patha[patha.length - 2].toUpperCase()
+      let paths = req.path.split('/') || []
+      let method = paths.at(paths.length - 2)?.toUpperCase()
 
-      let checkresult = await security.token2user(req)
-
-      if (func in apis) {
-        if (apis[func] === '1') {
-          if (checkresult != 0) {
-            if (checkresult === -2) {
-              logger.info('UNAUTHORIZED')
-              return res.status(401).send({
-                errno: -2,
-                msg: 'Login from other place',
-              })
-            } else {
+      if (typeof method !== 'string') {
+        logger.info('UNAUTHORIZED')
+        return res.status(401).send({
+          errno: -1,
+          msg: 'Auth Failed or session expired',
+        })
+      } else {
+        if (method != 'AUTH') {
+          try {
+            await token2user(req)
+            if (!(method in apis)) {
               logger.info('UNAUTHORIZED')
               return res.status(401).send({
                 errno: -1,
                 msg: 'Auth Failed or session expired',
               })
             }
+          } catch (error) {
+            if (error instanceof Error) {
+              if (error.message === 'LoginFromOtherPlace') {
+                return res.status(401).send({
+                  errno: -2,
+                  msg: 'Login from other place',
+                })
+              } else if (error.message === 'TokenExpiredError') {
+                return res.status(401).send({
+                  errno: -1,
+                  msg: 'Auth Failed or session expired',
+                })
+              } else if (error.message === 'MethodNotAuthorized') {
+                if (method in apis) {
+                  if (apis[method] === '1') {
+                    logger.info('UNAUTHORIZED')
+                    return res.status(401).send({
+                      errno: -1,
+                      msg: 'Auth Failed or session expired',
+                    })
+                  }
+                } else {
+                  logger.info('UNAUTHORIZED')
+                  return res.status(401).send({
+                    errno: -1,
+                    msg: 'Auth Failed or session expired',
+                  })
+                }
+              } else {
+                return res.status(401).send({
+                  errno: -1,
+                  msg: 'Auth Failed or session expired',
+                })
+              }
+            } else {
+              return res.status(401).send({
+                errno: -1,
+                msg: 'Auth Failed or session expired',
+              })
+            }
           }
-        } else {
-          if (checkresult === -2) {
-            return res.status(401).send({
-              errno: -2,
-              msg: 'Login from other place',
-            })
-          } else if (checkresult === -3) {
-            return res.status(401).send({
-              errno: -1,
-              msg: 'Auth Failed or session expired',
-            })
-          }
-        }
-      } else {
-        if (func != 'AUTH') {
-          logger.info('UNAUTHORIZED')
-          return res.status(401).send({
-            errno: -1,
-            msg: 'Auth Failed or session expired',
-          })
         }
       }
     }
+    next()
   } catch (error: any) {
     let sendData = {}
     if (process.env.NODE_ENV === 'dev') {

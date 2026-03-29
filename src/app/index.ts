@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express'
 import path from 'path'
 import routers from '@/routes'
+import { AuthMiddleware } from '@/utils/Authority'
 import logger from '@logger'
 
 const app = express()
@@ -25,10 +26,7 @@ app.use((req, res, next) => {
   next()
 })
 
-// const secureConfig = config.get<SecureConfig>('security')
-// authority.initMiddleware(simpleSelect, secureConfig)
-// // app.use('/api', authority.AuthMiddleware, systemTrace)
-// app.use('/api', authority.authMiddleware)
+app.use('/api', AuthMiddleware)
 
 app.get('/__webpack_hmr', (req, res) => {
   res.send('')

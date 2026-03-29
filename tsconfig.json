@@ -13,7 +13,7 @@
     "baseUrl": "src" /* Specify the base directory to resolve non-relative module names. */,
     "paths": {
       "@/*": ["*"],
-      "@app/*": ["app/*"],
+      "@app": ["app/index.ts"],
       "@services/*": ["services/*"],
       "@schedule/*": ["schedule/*"],
       "@prisma/*": ["prisma/*"],
