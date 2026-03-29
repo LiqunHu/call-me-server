@@ -8,6 +8,7 @@
     "start": "tsx ./src/index.ts",
     "syncDB": "prisma migrate dev --schema ./prisma",
     "genPrisma": "prisma generate --schema ./prisma",
+    "genSeeds": "tsx ./src/bin/initDB.ts",
     "test": "jest --detectOpenHandles",
     "test:watch": "jest --watch",
     "genswagger": "rimraf ./public/swagger/swagger.json && joi-swagger-generator -r -v ./services/ -h ./public/swagger/header.json -o ./public/swagger/swagger.json"
@@ -24,7 +25,7 @@
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "ioredis": "^5.10.1",
-    "joi": "^18.0.2",
+    "joi": "^18.1.1",
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.20.0",
     "pino": "^10.3.1",

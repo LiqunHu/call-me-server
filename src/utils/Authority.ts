@@ -1,5 +1,5 @@
 import { webcrypto } from 'crypto'
-import e, { Request, Response, NextFunction } from 'express'
+import { Request, Response, NextFunction } from 'express'
 import { sign, verify } from 'jsonwebtoken'
 import { createLogger } from '@logger'
 import redisClient from '@utils/RedisClient'
@@ -34,7 +34,7 @@ export interface DataStoredInToken {
 }
 
 export async function tokenVerify(req: Request): Promise<DataStoredInToken> {
-  let token_str = req.cookies['Authorization'] || req.header('Authorization')
+  let token_str = req.header('Authorization')
   if (!token_str) {
     logger.error('no token')
     throw new Error('NoTokenProvided')
@@ -84,12 +84,12 @@ async function token2user(req: Request) {
         let apiList = authData.authApis
 
         //auth control
-        let apis: { [key: string]: any } = {}
+        let apis = []
         for (let m of apiList) {
-          apis[m.api_function] = ''
+          apis.push(m.api_function)
         }
 
-        if (method in apis) {
+        if (apis.includes(method)) {
           return
         }
 
@@ -137,6 +137,7 @@ export async function AuthMiddleware(req: Request, res: Response, next: NextFunc
     if (req.method === 'POST') {
       let apis = await redisClient.get('AUTHAPI')
       if (apis === null) {
+        apis = {}
         const apiList = await prisma.common_api.findMany({
           where: {
             state: '1',
@@ -214,9 +215,9 @@ export async function AuthMiddleware(req: Request, res: Response, next: NextFunc
         }
       }
     }
-    next()
   } catch (error: any) {
     let sendData = {}
+    logger.fatal(error)
     if (process.env.NODE_ENV === 'dev') {
       sendData = {
         errno: -1,

@@ -1,56 +1,11 @@
 import 'dotenv/config'
-import { PrismaClient, Prisma } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 
 const pool = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
 const prisma = new PrismaClient({ adapter: pool })
 
-const apiData: Prisma.common_apiCreateInput[] = [
-  {
-    api_type: '0',
-    api_name: '系统菜单维护',
-    api_path: '/admin/auth/SystemApiControl',
-    api_function: 'SYSTEMAPICONTROL',
-    auth_flag: '1',
-  },
-  {
-    api_type: '0',
-    api_name: '角色设置',
-    api_path: '/admin/auth/GroupControl',
-    api_function: 'GROUPCONTROL',
-    auth_flag: '1',
-  },
-  {
-    api_type: '0',
-    api_name: '用户维护',
-    api_path: '/admin/auth/OperatorControl',
-    api_function: 'OPERATORCONTROL',
-    auth_flag: '1',
-  },
-  {
-    api_type: '0',
-    api_name: '重置密码',
-    api_path: '/admin/auth/ResetPassword',
-    api_function: 'RESETPASSWORD',
-    auth_flag: '1',
-  },
-  {
-    api_type: '2',
-    api_name: '用户设置',
-    api_path: '/admin/user/UserSetting',
-    api_function: 'USERSETTING',
-    auth_flag: '1',
-  },
-]
-
 async function main() {
-  for (const a of apiData) {
-    const api = await prisma.common_api.create({
-      data: a,
-    })
-    console.log(`Created api with id: ${api.api_id}`)
-  }
-
   const defaultGroup = await prisma.common_group.create({
     data: {
       group_type: '00',
@@ -75,6 +30,108 @@ async function main() {
       user_id: admin.user_id,
       group_id: defaultGroup.group_id,
     },
+  })
+
+  const root = await prisma.common_system_menu.create({
+    data: {
+      menu_name: 'System',
+      menu_icon: 'fa-cogs',
+      node_type: '00',
+      parent_id: '0',
+    },
+  })
+
+  const adminMenu = await prisma.common_system_menu.create({
+    data: {
+      menu_name: '权限管理',
+      node_type: '00',
+      parent_id: String(root.menu_id),
+    },
+  })
+
+  let api = await prisma.common_api.create({
+    data: {
+      api_type: '0',
+      api_name: '系统菜单维护',
+      api_path: '/admin/SystemApiControl',
+      api_function: 'SYSTEMAPICONTROL',
+      auth_flag: '1',
+    },
+  })
+
+  let menu = await prisma.common_system_menu.create({
+    data: {
+      menu_name: '系统菜单维护',
+      api_id: api.api_id,
+      node_type: '01',
+      parent_id: String(adminMenu.menu_id),
+    },
+  })
+
+  api = await prisma.common_api.create({
+    data: {
+      api_type: '0',
+      api_name: '角色组维护',
+      api_path: '/admin/GroupControl',
+      api_function: 'GROUPCONTROL',
+      auth_flag: '1',
+    },
+  })
+
+  menu = await prisma.common_system_menu.create({
+    data: {
+      menu_name: '角色组维护',
+      api_id: api.api_id,
+      node_type: '01',
+      parent_id: String(adminMenu.menu_id),
+    },
+  })
+
+  api = await prisma.common_api.create({
+    data: {
+      api_type: '0',
+      api_name: '用户维护',
+      api_path: '/admin/auth/OperatorControl',
+      api_function: 'OPERATORCONTROL',
+      auth_flag: '1',
+    },
+  })
+
+  menu = await prisma.common_system_menu.create({
+    data: {
+      menu_name: '用户维护',
+      api_id: api.api_id,
+      node_type: '01',
+      parent_id: String(adminMenu.menu_id),
+    },
+  })
+
+  api = await prisma.common_api.create({
+    data: {
+      api_type: '0',
+      api_name: '重置密码',
+      api_path: '/admin/auth/ResetPassword',
+      api_function: 'RESETPASSWORD',
+      auth_flag: '1',
+    },
+  })
+
+  menu = await prisma.common_system_menu.create({
+    data: { menu_name: '重置密码', api_id: api.api_id, node_type: '01', parent_id: String(adminMenu.menu_id) },
+  })
+
+  api = await prisma.common_api.create({
+    data: {
+      api_type: '2',
+      api_name: '用户设置',
+      api_path: '/admin/UserSetting',
+      api_function: 'USERSETTING',
+      auth_flag: '1',
+    },
+  })
+
+  menu = await prisma.common_system_menu.create({
+    data: { menu_name: '用户设置', api_id: api.api_id, node_type: '01', parent_id: String(adminMenu.menu_id) },
   })
 
   console.log('Database initialized successfully')

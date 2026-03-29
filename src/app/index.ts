@@ -36,14 +36,9 @@ for (const r of routers) {
   app.use(r.url, r.handler)
 }
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({ error: 'Not found' })
-})
-
 // Error handler
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  logger.error(err, 'Error')
+  console.log(err, 'Error')
   res.status(500).json({ error: 'Internal server error' })
 })
 
