@@ -1,4 +1,4 @@
-import Joi from 'joi'
+import * as z from 'zod'
 
 export default {
   name: 'OperatorControl Services',
@@ -9,7 +9,7 @@ export default {
       tags: ['OperatorControl'],
       path: '/api/system/auth/OperatorControl/init',
       type: 'post',
-      JoiSchema: {}
+      ZodSchema: {},
     },
     search: {
       name: '用户查询',
@@ -17,13 +17,13 @@ export default {
       tags: ['OperatorControl'],
       path: '/api/system/auth/OperatorControl/search',
       type: 'post',
-      JoiSchema: {
-        body: {
-          search_text: Joi.string().empty('').max(50),
-          limit: Joi.number().integer(),
-          offset: Joi.number().integer()
-        }
-      }
+      ZodSchema: {
+        body: z.object({
+          search_text: z.string().max(50),
+          limit: z.number().int(),
+          offset: z.number().int(),
+        }),
+      },
     },
     add: {
       name: '增加操作员',
@@ -31,18 +31,18 @@ export default {
       tags: ['OperatorControl'],
       path: '/api/system/auth/OperatorControl/add',
       type: 'post',
-      JoiSchema: {
-        body: {
-          user_username: Joi.string().max(50),
-          user_email: Joi.string().empty('').max(50),
-          user_phone: Joi.string().empty('').max(50),
-          user_name: Joi.string().empty('').max(50),
-          user_gender: Joi.string().max(2),
-          user_address: Joi.string().empty('').max(100),
-          user_zipcode: Joi.string().empty('').max(10),
-          user_groups: Joi.array().items(Joi.number().integer())
-        }
-      }
+      ZodSchema: {
+        body: z.object({
+          user_username: z.string().max(50),
+          user_email: z.string().max(50),
+          user_phone: z.string().max(50),
+          user_name: z.string().max(50),
+          user_gender: z.string().max(2),
+          user_address: z.string().max(100),
+          user_zipcode: z.string().max(10),
+          user_groups: z.array(z.number().int()),
+        }),
+      },
     },
     modify: {
       name: '修改用户',
@@ -50,26 +50,26 @@ export default {
       tags: ['OperatorControl'],
       path: '/api/system/auth/OperatorControl/modify',
       type: 'post',
-      JoiSchema: {
-        body: {
-          user_id: Joi.string().max(36).required(),
-          user_username: Joi.string().empty('').max(100),
-          user_email: Joi.string().empty('').max(100),
-          user_country_code: Joi.string().max(5),
-          user_phone: Joi.string().empty('').max(20),
-          user_name: Joi.string().empty('').max(100),
-          user_gender: Joi.string().empty('').max(1),
-          user_avatar: Joi.string().empty('').max(200),
-          user_province: Joi.string().empty('').max(20),
-          user_city: Joi.string().empty('').max(20),
-          user_district: Joi.string().empty('').max(20),
-          user_address: Joi.string().empty('').max(100),
-          user_zipcode: Joi.string().empty('').max(20),
-          user_company: Joi.string().empty('').max(200),
-          user_remark: Joi.string().empty('').max(200),
-          user_groups: Joi.array().items(Joi.number().integer())
-        }
-      }
+      ZodSchema: {
+        body: z.object({
+          user_id: z.string().max(36),
+          user_username: z.string().max(100),
+          user_email: z.string().max(100),
+          user_country_code: z.string().max(5),
+          user_phone: z.string().max(20),
+          user_name: z.string().max(100),
+          user_gender: z.string().max(1),
+          user_avatar: z.string().max(200),
+          user_province: z.string().max(20),
+          user_city: z.string().max(20),
+          user_district: z.string().max(20),
+          user_address: z.string().max(100),
+          user_zipcode: z.string().max(20),
+          user_company: z.string().max(200),
+          user_remark: z.string().max(200),
+          user_groups: z.array(z.number().int()),
+        }),
+      },
     },
     delete: {
       name: '删除用户',
@@ -77,11 +77,11 @@ export default {
       tags: ['OperatorControl'],
       path: '/api/system/auth/OperatorControl/delete',
       type: 'post',
-      JoiSchema: {
-        body: {
-          user_id: Joi.string().max(50).required()
-        }
-      }
+      ZodSchema: {
+        body: z.object({
+          user_id: z.string().max(50),
+        }),
+      },
     }
   }
 }

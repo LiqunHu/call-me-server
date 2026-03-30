@@ -1,4 +1,3 @@
-import Joi from 'joi'
 import * as z from 'zod'
 
 export default {
@@ -17,13 +16,6 @@ export default {
           identify_code: z.string().max(100),
         }),
       },
-      JoiSchema: {
-        body: {
-          login_type: Joi.string().allow('WEB', 'MOBILE', 'ADMIN'),
-          username: Joi.string().max(100),
-          identify_code: Joi.string().max(100),
-        },
-      },
     },
     captcha: {
       name: 'Get captcha',
@@ -31,7 +23,7 @@ export default {
       tags: ['Auth'],
       path: '/api/auth/captcha',
       type: 'post',
-      JoiSchema: {},
+      ZodSchema: {},
     },
     now: {
       name: 'Get now',
@@ -39,7 +31,7 @@ export default {
       tags: ['Auth'],
       path: '/api/auth/now',
       type: 'post',
-      JoiSchema: {},
+      ZodSchema: {},
     },
     loginSms: {
       name: 'Get login SMS',
@@ -47,12 +39,12 @@ export default {
       tags: ['Auth'],
       path: '/api/auth/loginSms',
       type: 'post',
-      JoiSchema: {
-        body: {
-          user_phone: Joi.string().regex(/^1[3|4|5|6|7|8|9]\d{9}$/),
-          key: Joi.string(),
-          code: Joi.string(),
-        },
+      ZodSchema: {
+        body: z.object({
+          user_phone: z.string().regex(/^1[3|4|5|6|7|8|9]\d{9}$/),
+          key: z.string(),
+          code: z.string(),
+        }),
       },
     },
     signinBySms: {
@@ -61,12 +53,12 @@ export default {
       tags: ['Auth'],
       path: '/api/auth/signinBySms',
       type: 'post',
-      JoiSchema: {
-        body: {
-          login_type: Joi.string().allow('WEB', 'MOBILE'),
-          user_phone: Joi.string().regex(/^1[3|4|5|6|7|8|9]\d{9}$/),
-          code: Joi.string(),
-        },
+      ZodSchema: {
+        body: z.object({
+          login_type: z.enum(['WEB', 'MOBILE']),
+          user_phone: z.string().regex(/^1[3|4|5|6|7|8|9]\d{9}$/),
+          code: z.string(),
+        }),
       },
     },
     signinByAccount: {
@@ -75,14 +67,14 @@ export default {
       tags: ['Auth'],
       path: '/api/auth/signinByAccount',
       type: 'post',
-      JoiSchema: {
-        body: {
-          login_type: Joi.string().allow('WEB', 'MOBILE'),
-          address: Joi.string(),
-          timezone: Joi.string(),
-          timestamp: Joi.number(),
-          signature: Joi.string(),
-        },
+      ZodSchema: {
+        body: z.object({
+          login_type: z.enum(['WEB', 'MOBILE']),
+          address: z.string(),
+          timezone: z.string(),
+          timestamp: z.number(),
+          signature: z.string(),
+        }),
       },
     },
     signout: {
@@ -91,7 +83,7 @@ export default {
       tags: ['Auth'],
       path: '/api/auth/signout',
       type: 'post',
-      JoiSchema: {},
+      ZodSchema: {},
     },
     userExist: {
       name: 'Check if user exists',
@@ -99,10 +91,10 @@ export default {
       tags: ['Auth'],
       path: '/api/auth/userExist',
       type: 'post',
-      JoiSchema: {
-        body: {
-          user_username: Joi.string().max(100),
-        },
+      ZodSchema: {
+        body: z.object({
+          user_username: z.string().max(100),
+        }),
       },
     },
     registerSms: {
@@ -111,13 +103,13 @@ export default {
       tags: ['Auth'],
       path: '/api/auth/registerSms',
       type: 'post',
-      JoiSchema: {
-        body: {
-          country_code: Joi.string().allow('86', '852', '81', '853', '63', '65', '82', '886', '66', '60', '44', '1'),
-          user_phone: Joi.string().regex(/^1[3|4|5|6|7|8|9]\d{9}$/),
-          key: Joi.string(),
-          code: Joi.string(),
-        },
+      ZodSchema: {
+        body: z.object({
+          country_code: z.enum(['86', '852', '81', '853', '63', '65', '82', '886', '66', '60', '44', '1']),
+          user_phone: z.string().regex(/^1[3|4|5|6|7|8|9]\d{9}$/),
+          key: z.string(),
+          code: z.string(),
+        }),
       },
     },
     register: {
@@ -126,17 +118,17 @@ export default {
       tags: ['Auth'],
       path: '/api/auth/register',
       type: 'post',
-      JoiSchema: {
-        body: {
-          user_username: Joi.string().max(100),
-          country_code: Joi.string().allow('86'),
-          user_phone: Joi.string().regex(/^1[3|4|5|6|7|8|9]\d{9}$/),
-          user_password: Joi.string().max(50),
-          code: Joi.string(),
-          user_name: Joi.string().empty('').max(100),
-          company_name: Joi.string().empty('').max(100),
-          user_position: Joi.string().empty('').max(50),
-        },
+      ZodSchema: {
+        body: z.object({
+          user_username: z.string().max(100),
+          country_code: z.literal('86'),
+          user_phone: z.string().regex(/^1[3|4|5|6|7|8|9]\d{9}$/),
+          user_password: z.string().max(50),
+          code: z.string(),
+          user_name: z.string().max(100),
+          company_name: z.string().max(100),
+          user_position: z.string().max(50),
+        }),
       },
     },
   },

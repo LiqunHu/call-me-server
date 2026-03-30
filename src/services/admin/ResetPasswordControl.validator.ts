@@ -1,4 +1,4 @@
-import Joi from 'joi'
+import * as z from 'zod'
 
 export default {
   name: 'ResetPassword Services',
@@ -9,10 +9,10 @@ export default {
       tags: ['ResetPassword'],
       path: '/api/system/auth/ResetPassword/search',
       type: 'post',
-      JoiSchema: {
-        body: {
-          search_text: Joi.string().max(50).required(),
-        },
+      ZodSchema: {
+        body: z.object({
+          search_text: z.string().max(50),
+        }),
       },
     },
     reset: {
@@ -21,12 +21,12 @@ export default {
       tags: ['ResetPassword'],
       path: '/api/system/auth/ResetPassword/reset',
       type: 'post',
-      JoiSchema: {
-        body: {
-          user_id: Joi.string().max(50).required(),
-          version: Joi.number().integer(),
-          updated_at: Joi.string().max(50),
-        },
+      ZodSchema: {
+        body: z.object({
+          user_id: z.string().max(50),
+          version: z.number().int(),
+          updated_at: z.string().max(50),
+        }),
       },
     },
   },

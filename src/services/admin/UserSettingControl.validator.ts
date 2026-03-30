@@ -1,4 +1,4 @@
-import Joi from 'joi'
+import * as z from 'zod'
 
 export default {
   name: 'UserSetting Services',
@@ -9,12 +9,12 @@ export default {
       tags: ['SystemAuthControl'],
       path: '/api/admin/user/UserSetting/changePassword',
       type: 'post',
-      JoiSchema: {
-        body: {
-          old_password: Joi.string(),
-          password: Joi.string()
-        }
-      }
+      ZodSchema: {
+        body: z.object({
+          old_password: z.string(),
+          password: z.string(),
+        }),
+      },
     }
   }
 }

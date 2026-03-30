@@ -1,4 +1,4 @@
-import Joi from 'joi'
+import * as z from 'zod'
 
 export default {
   name: 'GroupControl Services',
@@ -9,7 +9,7 @@ export default {
       tags: ['GroupControl'],
       path: '/api/system/auth/GroupControl/init',
       type: 'post',
-      JoiSchema: {},
+      ZodSchema: {},
     },
     search: {
       name: '组查询',
@@ -17,7 +17,7 @@ export default {
       tags: ['GroupControl'],
       path: '/api/system/auth/GroupControl/search',
       type: 'post',
-      JoiSchema: {},
+      ZodSchema: {},
     },
     getcheck: {
       name: '获取组下拥有的菜单',
@@ -25,10 +25,10 @@ export default {
       tags: ['GroupControl'],
       path: '/api/system/auth/GroupControl/getcheck',
       type: 'post',
-      JoiSchema: {
-        body: {
-          group_id: Joi.number().integer().required(),
-        },
+      ZodSchema: {
+        body: z.object({
+          group_id: z.number().int(),
+        }),
       },
     },
     add: {
@@ -37,18 +37,18 @@ export default {
       tags: ['GroupControl'],
       path: '/api/system/auth/GroupControl/add',
       type: 'post',
-      JoiSchema: {
-        body: {
-          group_name: Joi.string().empty('').max(50),
-          node_type: Joi.string().max(2),
-          parent_id: Joi.number().integer(),
-          group_code: Joi.string().max(20),
-          menus: Joi.array().items(
-            Joi.object().keys({
-              menu_id: Joi.number().integer(),
-            })
+      ZodSchema: {
+        body: z.object({
+          group_name: z.string().max(50),
+          node_type: z.string().max(2),
+          parent_id: z.number().int(),
+          group_code: z.string().max(20),
+          menus: z.array(
+            z.object({
+              menu_id: z.number().int(),
+            }),
           ),
-        },
+        }),
       },
     },
     modify: {
@@ -57,17 +57,17 @@ export default {
       tags: ['GroupControl'],
       path: '/api/system/auth/GroupControl/modify',
       type: 'post',
-      JoiSchema: {
-        body: {
-          group_id: Joi.number().integer().required(),
-          group_code: Joi.string().max(20),
-          group_name: Joi.string().empty('').max(50),
-          menus: Joi.array().items(
-            Joi.object().keys({
-              menu_id: Joi.number().integer(),
-            })
+      ZodSchema: {
+        body: z.object({
+          group_id: z.number().int(),
+          group_code: z.string().max(20),
+          group_name: z.string().max(50),
+          menus: z.array(
+            z.object({
+              menu_id: z.number().int(),
+            }),
           ),
-        },
+        }),
       },
     },
     remove: {
@@ -76,10 +76,10 @@ export default {
       tags: ['GroupControl'],
       path: '/api/system/auth/GroupControl/remove',
       type: 'post',
-      JoiSchema: {
-        body: {
-          group_id: Joi.number().integer().required(),
-        },
+      ZodSchema: {
+        body: z.object({
+          group_id: z.number().int(),
+        }),
       },
     },
   },

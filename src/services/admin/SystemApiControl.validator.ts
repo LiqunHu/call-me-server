@@ -1,4 +1,4 @@
-import Joi from 'joi'
+import * as z from 'zod'
 
 export default {
   name: 'SystemApiControl Services',
@@ -9,7 +9,7 @@ export default {
       tags: ['SystemApiControl'],
       path: '/api/system/auth/SystemApiControl/init',
       type: 'post',
-      JoiSchema: {},
+      ZodSchema: {},
     },
     search: {
       name: 'API树查询',
@@ -17,7 +17,7 @@ export default {
       tags: ['SystemApiControl'],
       path: '/api/system/auth/SystemApiControl/search',
       type: 'post',
-      JoiSchema: {},
+      ZodSchema: {},
     },
     addFolder: {
       name: '增加目录',
@@ -25,12 +25,12 @@ export default {
       tags: ['SystemApiControl'],
       path: '/api/system/auth/SystemApiControl/addFolder',
       type: 'post',
-      JoiSchema: {
-        body: {
-          parent_id: Joi.number().integer(),
-          menu_icon: Joi.string().max(50),
-          menu_name: Joi.string().max(50),
-        },
+      ZodSchema: {
+        body: z.object({
+          parent_id: z.number().int(),
+          menu_icon: z.string().max(50),
+          menu_name: z.string().max(50),
+        }),
       },
     },
     modifyFolder: {
@@ -39,12 +39,12 @@ export default {
       tags: ['SystemApiControl'],
       path: '/api/system/auth/SystemApiControl/modifyFolder',
       type: 'post',
-      JoiSchema: {
-        body: {
-          menu_id: Joi.number().integer(),
-          menu_icon: Joi.string().max(50),
-          menu_name: Joi.string().max(50),
-        },
+      ZodSchema: {
+        body: z.object({
+          menu_id: z.number().int(),
+          menu_icon: z.string().max(50),
+          menu_name: z.string().max(50),
+        }),
       },
     },
     addMenu: {
@@ -53,16 +53,16 @@ export default {
       tags: ['SystemApiControl'],
       path: '/api/system/auth/SystemApiControl/addMenu',
       type: 'post',
-      JoiSchema: {
-        body: {
-          parent_id: Joi.number().integer(),
-          api_type: Joi.string().max(10),
-          api_path: Joi.string().empty('').max(300),
-          api_function: Joi.string().empty('').max(100),
-          auth_flag: Joi.string().empty('').max(10),
-          api_remark: Joi.string().empty('').max(500),
-          menu_name: Joi.string().max(300),
-        },
+      ZodSchema: {
+        body: z.object({
+          parent_id: z.number().int(),
+          api_type: z.string().max(10),
+          api_path: z.string().max(300),
+          api_function: z.string().max(100),
+          auth_flag: z.string().max(10),
+          api_remark: z.string().max(500),
+          menu_name: z.string().max(300),
+        }),
       },
     },
     modifyMenu: {
@@ -71,16 +71,16 @@ export default {
       tags: ['SystemApiControl'],
       path: '/api/system/auth/SystemApiControl/modifyMenu',
       type: 'post',
-      JoiSchema: {
-        body: {
-          menu_id: Joi.number().integer(),
-          api_type: Joi.string().max(10),
-          api_path: Joi.string().empty('').max(300),
-          api_function: Joi.string().empty('').max(100),
-          auth_flag: Joi.string().empty('').max(10),
-          api_remark: Joi.string().empty('').max(500),
-          menu_name: Joi.string().max(300),
-        },
+      ZodSchema: {
+        body: z.object({
+          menu_id: z.number().int(),
+          api_type: z.string().max(10),
+          api_path: z.string().max(300),
+          api_function: z.string().max(100),
+          auth_flag: z.string().max(10),
+          api_remark: z.string().max(500),
+          menu_name: z.string().max(300),
+        }),
       },
     },
     remove: {
@@ -89,10 +89,10 @@ export default {
       tags: ['SystemApiControl'],
       path: '/api/system/auth/SystemApiControl/remove',
       type: 'post',
-      JoiSchema: {
-        body: {
-          menu_id: Joi.number().integer(),
-        },
+      ZodSchema: {
+        body: z.object({
+          menu_id: z.number().int(),
+        }),
       },
     },
   },
