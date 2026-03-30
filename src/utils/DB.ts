@@ -45,7 +45,7 @@ export async function queryWithCount(pageDoc: pageInfo, queryStr: string, replac
   const queryRst = await prisma.$queryRawUnsafe(queryStr + ` offset $${index + 1} limit $${index + 2}`, ...rep)
 
   return {
-    count: count[0].num,
+    count: Number(count[0].num),
     data: queryRst,
   }
 }

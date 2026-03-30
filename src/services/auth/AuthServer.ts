@@ -537,7 +537,7 @@ async function loginInit(user: common_userModel, session_token: string, type: st
 
           authApis.push({
             api_name: 'User maintenance',
-            api_function: 'OPERATORCONTROL',
+            api_function: 'USERCONTROL',
           })
 
           authApis.push({
@@ -548,21 +548,6 @@ async function loginInit(user: common_userModel, session_token: string, type: st
           authApis.push({
             api_name: 'Reset password',
             api_function: 'RESETPASSWORD',
-          })
-        } else {
-          authApis.push({
-            api_name: 'Organizational maintenance',
-            api_function: 'ORGANIZATIONGROUPCONTROL',
-          })
-
-          authApis.push({
-            api_name: 'Institutional user maintenance',
-            api_function: 'ORGANIZATIONUSERCONTROL',
-          })
-
-          authApis.push({
-            api_name: 'Base',
-            api_function: 'BASECONTROL',
           })
         }
       } else {

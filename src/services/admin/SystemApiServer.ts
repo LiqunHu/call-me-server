@@ -220,7 +220,7 @@ async function modifyMenuAct(req: Request) {
 
     const conflictByName = await prisma.common_api.findFirst({
       where: {
-        api_name: doc.systemmenu_name,
+        api_name: doc.menu_name,
         state: GLBConfig.ENABLE,
         ...(menum.api_id != null ? { NOT: { api_id: menum.api_id } } : {}),
       },

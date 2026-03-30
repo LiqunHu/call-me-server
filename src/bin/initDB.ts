@@ -92,7 +92,7 @@ async function main() {
       api_type: '0',
       api_name: '用户维护',
       api_path: '/admin/auth/OperatorControl',
-      api_function: 'OPERATORCONTROL',
+      api_function: 'USERCONTROL',
       auth_flag: '1',
     },
   })

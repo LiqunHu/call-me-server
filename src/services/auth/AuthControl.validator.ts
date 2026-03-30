@@ -1,4 +1,5 @@
 import Joi from 'joi'
+import * as z from 'zod'
 
 export default {
   name: 'Auth Services',
@@ -9,9 +10,16 @@ export default {
       tags: ['Auth'],
       path: '/api/auth/signin',
       type: 'post',
+      ZodSchema: {
+        body: z.object({
+          login_type: z.enum(['WEB', 'MOBILE', 'ADMIN']),
+          username: z.string().max(100),
+          identify_code: z.string().max(100),
+        }),
+      },
       JoiSchema: {
         body: {
-          login_type: Joi.string().allow('WEB', 'MOBILE'),
+          login_type: Joi.string().allow('WEB', 'MOBILE', 'ADMIN'),
           username: Joi.string().max(100),
           identify_code: Joi.string().max(100),
         },

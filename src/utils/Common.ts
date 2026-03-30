@@ -1,5 +1,5 @@
 import fs from 'fs'
-import Joi from 'joi'
+import { z } from 'zod'
 import { Request, Response } from 'express'
 import { createLogger } from '@/utils/Logger'
 import ErrorMap from './ErrorMap'
@@ -29,10 +29,15 @@ async function reqTrans(req: Request, callFile: string) {
   if (fs.existsSync(validatorFile)) {
     const validator = await import(validatorFile)
     if (validator.default?.apiList && Object.prototype.hasOwnProperty.call(validator.default.apiList, method)) {
-      const reqJoiSchema = validator.default.apiList[method].JoiSchema
-      if (reqJoiSchema.body) {
-        const schema = Joi.object(reqJoiSchema.body)
-        await schema.validateAsync(doc)
+      // const reqJoiSchema = validator.default.apiList[method].JoiSchema
+      // if (reqJoiSchema.body) {
+      //   const schema = Joi.object(reqJoiSchema.body)
+      //   await schema.validateAsync(doc)
+      // }
+
+      const reqZodSchema = validator.default.apiList[method].ZodSchema
+      if (reqZodSchema.body) {
+        reqZodSchema.body.parse(doc)
       }
     }
   }
@@ -82,26 +87,19 @@ function sendData(res: Response, data: string | object) {
 }
 
 function sendFault(res: any, msg: any) {
-  let sendData = { errno: -1, msg: 'Internal Error' }
+  let sendData: { errno: string; msg: string | object } = { errno: 'common_02', msg: 'Internal Error' }
 
-  if (msg instanceof Error) {
+  if (msg instanceof z.ZodError) {
+    sendData = {
+      errno: 'common_03',
+      msg: msg.issues,
+    }
+  } else if (msg instanceof Error) {
     logger.fatal(msg.stack)
-    if (process.env.NODE_ENV === 'test') {
+    if (process.env.NODE_ENV === 'dev') {
       sendData = {
-        errno: -3,
-        msg: msg.stack || 'Validation Error',
-      }
-    } else {
-      if (msg.name === 'ValidationError') {
-        sendData = {
-          errno: -3,
-          msg: 'Validation Error',
-        }
-      } else {
-        sendData = {
-          errno: -1,
-          msg: 'Internal Error',
-        }
+        errno: 'common_02',
+        msg: msg.stack || 'Internal Error',
       }
     }
   } else {

@@ -1,6 +1,7 @@
 const errorList: { [index: string]: any } = {
   common_01: 'Method not supported',
   common_02: 'Unknown',
+  common_03: 'Invalidate input',
   common_api_01: 'Already exists',
   common_api_02: 'Item does not exist',
   common_api_03: 'Unknown file type',
