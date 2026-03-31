@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client.js'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { createLogger } from '@logger'
 
-export let prisma: PrismaClient
+export let prisma: PrismaClient<'query'>
 const logger = createLogger('Prisma')
 
 export function initDB(url: string) {
