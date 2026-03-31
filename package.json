@@ -9,9 +9,9 @@
     "syncDB": "prisma migrate dev --schema ./prisma",
     "genPrisma": "prisma generate --schema ./prisma",
     "genSeeds": "tsx ./src/bin/initDB.ts",
+    "genOpenAPI": "tsx ./src/bin/genOpenAPI.ts",
     "test": "jest --detectOpenHandles",
-    "test:watch": "jest --watch",
-    "genswagger": "rimraf ./public/swagger/swagger.json && joi-swagger-generator -r -v ./services/ -h ./public/swagger/header.json -o ./public/swagger/swagger.json"
+    "test:watch": "jest --watch"
   },
   "prettier": {
     "semi": false,
