@@ -86,6 +86,7 @@ const buildRegistry = async () => {
         operationId: `${moduleId}:${key}`,
         summary: api.summary ?? api.name ?? key,
         description: api.description ?? api.name ?? key,
+        ...(validator?.name ? { tags: [validator.name] } : {}),
         request: {
           ...(paramsSchema ? { params: paramsSchema } : {}),
           ...(querySchema ? { query: querySchema } : {}),
