@@ -5,8 +5,8 @@ export default {
   apiList: {
     signin: {
       name: 'Login authorization',
-      enname: 'Authsignin',
-      tags: ['Auth'],
+      summary: 'Login authorization',
+      description: 'Login authorization',
       path: '/api/auth/signin',
       type: 'post',
       ZodSchema: {
@@ -19,24 +19,24 @@ export default {
     },
     captcha: {
       name: 'Get captcha',
-      enname: 'Authcaptcha',
-      tags: ['Auth'],
+      summary: 'Get captcha',
+      description: 'Get captcha',
       path: '/api/auth/captcha',
       type: 'post',
       ZodSchema: {},
     },
     now: {
       name: 'Get now',
-      enname: 'Authnow',
-      tags: ['Auth'],
+      summary: 'Get now',
+      description: 'Get now',
       path: '/api/auth/now',
       type: 'post',
       ZodSchema: {},
     },
     loginSms: {
       name: 'Get login SMS',
-      enname: 'AuthLoginSms',
-      tags: ['Auth'],
+      summary: 'Get login SMS',
+      description: 'Get login SMS',
       path: '/api/auth/loginSms',
       type: 'post',
       ZodSchema: {
@@ -49,8 +49,8 @@ export default {
     },
     signinBySms: {
       name: 'Sign in by SMS',
-      enname: 'AuthsigninBySms',
-      tags: ['Auth'],
+      summary: 'Sign in by SMS',
+      description: 'Sign in by SMS',
       path: '/api/auth/signinBySms',
       type: 'post',
       ZodSchema: {
@@ -63,8 +63,8 @@ export default {
     },
     signinByAccount: {
       name: 'Sign in by web3 address',
-      enname: 'AuthsigninByAccount',
-      tags: ['Auth'],
+      summary: 'Sign in by web3 address',
+      description: 'Sign in by web3 address',
       path: '/api/auth/signinByAccount',
       type: 'post',
       ZodSchema: {
@@ -79,16 +79,16 @@ export default {
     },
     signout: {
       name: 'Logout',
-      enname: 'Authsignout',
-      tags: ['Auth'],
+      summary: 'Logout',
+      description: 'Logout',
       path: '/api/auth/signout',
       type: 'post',
       ZodSchema: {},
     },
     userExist: {
       name: 'Check if user exists',
-      enname: 'AuthuserExist',
-      tags: ['Auth'],
+      summary: 'Check if user exists',
+      description: 'Check if user exists',
       path: '/api/auth/userExist',
       type: 'post',
       ZodSchema: {
@@ -99,8 +99,8 @@ export default {
     },
     registerSms: {
       name: 'Get registration SMS verification code',
-      enname: 'AuthRegisterSms',
-      tags: ['Auth'],
+      summary: 'Get registration SMS verification code',
+      description: 'Get registration SMS verification code',
       path: '/api/auth/registerSms',
       type: 'post',
       ZodSchema: {
@@ -114,8 +114,8 @@ export default {
     },
     register: {
       name: 'register',
-      enname: 'Authregister',
-      tags: ['Auth'],
+      summary: 'register',
+      description: 'register',
       path: '/api/auth/register',
       type: 'post',
       ZodSchema: {

@@ -5,24 +5,24 @@ export default {
   apiList: {
     init: {
       name: '获取组数据字典',
-      enname: 'GroupControlinit',
-      tags: ['GroupControl'],
+      summary: '获取组数据字典',
+      description: '获取组数据字典',
       path: '/api/system/auth/GroupControl/init',
       type: 'post',
       ZodSchema: {},
     },
     search: {
       name: '组查询',
-      enname: 'GroupControlsearch',
-      tags: ['GroupControl'],
+      summary: '组查询',
+      description: '组查询',
       path: '/api/system/auth/GroupControl/search',
       type: 'post',
       ZodSchema: {},
     },
     getcheck: {
       name: '获取组下拥有的菜单',
-      enname: 'GroupControlgetcheck',
-      tags: ['GroupControl'],
+      summary: '获取组下拥有的菜单',
+      description: '获取组下拥有的菜单',
       path: '/api/system/auth/GroupControl/getcheck',
       type: 'post',
       ZodSchema: {
@@ -33,8 +33,8 @@ export default {
     },
     add: {
       name: '增加目录或者节点',
-      enname: 'GroupControladd',
-      tags: ['GroupControl'],
+      summary: '增加目录或者节点',
+      description: '增加目录或者节点',
       path: '/api/system/auth/GroupControl/add',
       type: 'post',
       ZodSchema: {
@@ -53,8 +53,8 @@ export default {
     },
     modify: {
       name: '修改节点',
-      enname: 'GroupControlmodify',
-      tags: ['GroupControl'],
+      summary: '修改节点',
+      description: '修改节点',
       path: '/api/system/auth/GroupControl/modify',
       type: 'post',
       ZodSchema: {
@@ -72,8 +72,8 @@ export default {
     },
     remove: {
       name: '删除组',
-      enname: 'GroupControlremove',
-      tags: ['GroupControl'],
+      summary: '删除组',
+      description: '删除组',
       path: '/api/system/auth/GroupControl/remove',
       type: 'post',
       ZodSchema: {

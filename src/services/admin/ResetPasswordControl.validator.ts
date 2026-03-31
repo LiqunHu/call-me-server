@@ -5,8 +5,8 @@ export default {
   apiList: {
     search: {
       name: '查询客户信息',
-      enname: 'ResetPasswordSearch',
-      tags: ['ResetPassword'],
+      summary: '查询客户信息',
+      description: '查询客户信息',
       path: '/api/system/auth/ResetPassword/search',
       type: 'post',
       ZodSchema: {
@@ -17,8 +17,8 @@ export default {
     },
     reset: {
       name: '重置密码',
-      enname: 'ResetPasswordReset',
-      tags: ['ResetPassword'],
+      summary: '重置密码',
+      description: '重置密码',
       path: '/api/system/auth/ResetPassword/reset',
       type: 'post',
       ZodSchema: {

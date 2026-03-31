@@ -5,24 +5,24 @@ export default {
   apiList: {
     init: {
       name: '获取数据字典',
-      enname: 'SystemApiControlinit',
-      tags: ['SystemApiControl'],
+      summary: '获取数据字典',
+      description: '获取数据字典',
       path: '/api/system/auth/SystemApiControl/init',
       type: 'post',
       ZodSchema: {},
     },
     search: {
       name: 'API树查询',
-      enname: 'SystemApiControlsearch',
-      tags: ['SystemApiControl'],
+      summary: 'API树查询',
+      description: 'API树查询',
       path: '/api/system/auth/SystemApiControl/search',
       type: 'post',
       ZodSchema: {},
     },
     addFolder: {
       name: '增加目录',
-      enname: 'SystemApiControladdFolder',
-      tags: ['SystemApiControl'],
+      summary: '增加目录',
+      description: '增加目录',
       path: '/api/system/auth/SystemApiControl/addFolder',
       type: 'post',
       ZodSchema: {
@@ -35,8 +35,8 @@ export default {
     },
     modifyFolder: {
       name: '修改目录',
-      enname: 'SystemApiControlmodifyFolder',
-      tags: ['SystemApiControl'],
+      summary: '修改目录',
+      description: '修改目录',
       path: '/api/system/auth/SystemApiControl/modifyFolder',
       type: 'post',
       ZodSchema: {
@@ -49,8 +49,8 @@ export default {
     },
     addMenu: {
       name: '增加API',
-      enname: 'SystemApiControladdMenu',
-      tags: ['SystemApiControl'],
+      summary: '增加API',
+      description: '增加API',
       path: '/api/system/auth/SystemApiControl/addMenu',
       type: 'post',
       ZodSchema: {
@@ -67,8 +67,8 @@ export default {
     },
     modifyMenu: {
       name: '修改API',
-      enname: 'SystemApiControlmodifyMenu',
-      tags: ['SystemApiControl'],
+      summary: '修改API',
+      description: '修改API',
       path: '/api/system/auth/SystemApiControl/modifyMenu',
       type: 'post',
       ZodSchema: {
@@ -85,8 +85,8 @@ export default {
     },
     remove: {
       name: '删除节点',
-      enname: 'SystemApiControlremove',
-      tags: ['SystemApiControl'],
+      summary: '删除节点',
+      description: '删除节点',
       path: '/api/system/auth/SystemApiControl/remove',
       type: 'post',
       ZodSchema: {

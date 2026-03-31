@@ -5,16 +5,16 @@ export default {
   apiList: {
     init: {
       name: '获取组相关信息',
-      enname: 'OperatorControlinit',
-      tags: ['OperatorControl'],
+      summary: '获取组相关信息',
+      description: '获取组相关信息',
       path: '/api/system/auth/OperatorControl/init',
       type: 'post',
       ZodSchema: {},
     },
     search: {
       name: '用户查询',
-      enname: 'OperatorControlsearch',
-      tags: ['OperatorControl'],
+      summary: '用户查询',
+      description: '用户查询',
       path: '/api/system/auth/OperatorControl/search',
       type: 'post',
       ZodSchema: {
@@ -27,8 +27,8 @@ export default {
     },
     add: {
       name: '增加操作员',
-      enname: 'OperatorControladd',
-      tags: ['OperatorControl'],
+      summary: '增加操作员',
+      description: '增加操作员',
       path: '/api/system/auth/OperatorControl/add',
       type: 'post',
       ZodSchema: {
@@ -46,8 +46,8 @@ export default {
     },
     modify: {
       name: '修改用户',
-      enname: 'OperatorControlmodify',
-      tags: ['OperatorControl'],
+      summary: '修改用户',
+      description: '修改用户',
       path: '/api/system/auth/OperatorControl/modify',
       type: 'post',
       ZodSchema: {
@@ -73,8 +73,8 @@ export default {
     },
     delete: {
       name: '删除用户',
-      enname: 'OperatorControldelete',
-      tags: ['OperatorControl'],
+      summary: '删除用户',
+      description: '删除用户',
       path: '/api/system/auth/OperatorControl/delete',
       type: 'post',
       ZodSchema: {

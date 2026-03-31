@@ -5,8 +5,8 @@ export default {
   apiList: {
     init: {
       name: 'changePassword',
-      enname: 'UserSettingchangePassword',
-      tags: ['SystemAuthControl'],
+      summary: 'changePassword',
+      description: 'changePassword',
       path: '/api/admin/user/UserSetting/changePassword',
       type: 'post',
       ZodSchema: {
