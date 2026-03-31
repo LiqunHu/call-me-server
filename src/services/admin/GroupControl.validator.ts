@@ -7,7 +7,7 @@ export default {
       name: '获取组数据字典',
       summary: '获取组数据字典',
       description: '获取组数据字典',
-      path: '/api/system/auth/GroupControl/init',
+      path: '/api/admin/GroupControl/init',
       type: 'post',
       ZodSchema: {},
     },
@@ -15,7 +15,7 @@ export default {
       name: '组查询',
       summary: '组查询',
       description: '组查询',
-      path: '/api/system/auth/GroupControl/search',
+      path: '/api/admin/GroupControl/search',
       type: 'post',
       ZodSchema: {},
     },
@@ -23,7 +23,7 @@ export default {
       name: '获取组下拥有的菜单',
       summary: '获取组下拥有的菜单',
       description: '获取组下拥有的菜单',
-      path: '/api/system/auth/GroupControl/getcheck',
+      path: '/api/admin/GroupControl/getcheck',
       type: 'post',
       ZodSchema: {
         body: z.object({
@@ -35,7 +35,7 @@ export default {
       name: '增加目录或者节点',
       summary: '增加目录或者节点',
       description: '增加目录或者节点',
-      path: '/api/system/auth/GroupControl/add',
+      path: '/api/admin/GroupControl/add',
       type: 'post',
       ZodSchema: {
         body: z.object({
@@ -55,7 +55,7 @@ export default {
       name: '修改节点',
       summary: '修改节点',
       description: '修改节点',
-      path: '/api/system/auth/GroupControl/modify',
+      path: '/api/admin/GroupControl/modify',
       type: 'post',
       ZodSchema: {
         body: z.object({
@@ -74,7 +74,7 @@ export default {
       name: '删除组',
       summary: '删除组',
       description: '删除组',
-      path: '/api/system/auth/GroupControl/remove',
+      path: '/api/admin/GroupControl/remove',
       type: 'post',
       ZodSchema: {
         body: z.object({

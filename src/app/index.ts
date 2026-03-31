@@ -10,7 +10,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use(express.raw({ limit: '50mb' }))
 app.disable('etag')
 
-app.use(express.static(path.join(__dirname, '../public')))
+app.use(express.static('public'))
 app.use('/temp', express.static(path.join(__dirname, '../../public/temp')))
 app.use('/files', express.static(path.join(__dirname, '../../public/files')))
 

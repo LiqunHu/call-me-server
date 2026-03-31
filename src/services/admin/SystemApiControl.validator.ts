@@ -7,7 +7,7 @@ export default {
       name: '获取数据字典',
       summary: '获取数据字典',
       description: '获取数据字典',
-      path: '/api/system/auth/SystemApiControl/init',
+      path: '/api/admin/SystemApiControl/init',
       type: 'post',
       ZodSchema: {},
     },
@@ -15,7 +15,7 @@ export default {
       name: 'API树查询',
       summary: 'API树查询',
       description: 'API树查询',
-      path: '/api/system/auth/SystemApiControl/search',
+      path: '/api/admin/SystemApiControl/search',
       type: 'post',
       ZodSchema: {},
     },
@@ -23,7 +23,7 @@ export default {
       name: '增加目录',
       summary: '增加目录',
       description: '增加目录',
-      path: '/api/system/auth/SystemApiControl/addFolder',
+      path: '/api/admin/SystemApiControl/addFolder',
       type: 'post',
       ZodSchema: {
         body: z.object({
@@ -37,7 +37,7 @@ export default {
       name: '修改目录',
       summary: '修改目录',
       description: '修改目录',
-      path: '/api/system/auth/SystemApiControl/modifyFolder',
+      path: '/api/admin/SystemApiControl/modifyFolder',
       type: 'post',
       ZodSchema: {
         body: z.object({
@@ -51,7 +51,7 @@ export default {
       name: '增加API',
       summary: '增加API',
       description: '增加API',
-      path: '/api/system/auth/SystemApiControl/addMenu',
+      path: '/api/admin/SystemApiControl/addMenu',
       type: 'post',
       ZodSchema: {
         body: z.object({
@@ -69,7 +69,7 @@ export default {
       name: '修改API',
       summary: '修改API',
       description: '修改API',
-      path: '/api/system/auth/SystemApiControl/modifyMenu',
+      path: '/api/admin/SystemApiControl/modifyMenu',
       type: 'post',
       ZodSchema: {
         body: z.object({
@@ -87,7 +87,7 @@ export default {
       name: '删除节点',
       summary: '删除节点',
       description: '删除节点',
-      path: '/api/system/auth/SystemApiControl/remove',
+      path: '/api/admin/SystemApiControl/remove',
       type: 'post',
       ZodSchema: {
         body: z.object({

@@ -7,7 +7,7 @@ export default {
       name: '查询客户信息',
       summary: '查询客户信息',
       description: '查询客户信息',
-      path: '/api/system/auth/ResetPassword/search',
+      path: '/api/admin/ResetPassword/search',
       type: 'post',
       ZodSchema: {
         body: z.object({
@@ -19,7 +19,7 @@ export default {
       name: '重置密码',
       summary: '重置密码',
       description: '重置密码',
-      path: '/api/system/auth/ResetPassword/reset',
+      path: '/api/admin/ResetPassword/reset',
       type: 'post',
       ZodSchema: {
         body: z.object({

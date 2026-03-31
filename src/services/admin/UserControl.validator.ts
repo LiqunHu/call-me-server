@@ -1,13 +1,13 @@
 import * as z from 'zod'
 
 export default {
-  name: 'OperatorControl Services',
+  name: 'UserControl Services',
   apiList: {
     init: {
       name: '获取组相关信息',
       summary: '获取组相关信息',
       description: '获取组相关信息',
-      path: '/api/system/auth/OperatorControl/init',
+      path: '/api/admin/UserControl/init',
       type: 'post',
       ZodSchema: {},
     },
@@ -15,7 +15,7 @@ export default {
       name: '用户查询',
       summary: '用户查询',
       description: '用户查询',
-      path: '/api/system/auth/OperatorControl/search',
+      path: '/api/admin/UserControl/search',
       type: 'post',
       ZodSchema: {
         body: z.object({
@@ -29,7 +29,7 @@ export default {
       name: '增加操作员',
       summary: '增加操作员',
       description: '增加操作员',
-      path: '/api/system/auth/OperatorControl/add',
+      path: '/api/admin/UserControl/add',
       type: 'post',
       ZodSchema: {
         body: z.object({
@@ -48,7 +48,7 @@ export default {
       name: '修改用户',
       summary: '修改用户',
       description: '修改用户',
-      path: '/api/system/auth/OperatorControl/modify',
+      path: '/api/admin/UserControl/modify',
       type: 'post',
       ZodSchema: {
         body: z.object({
@@ -75,7 +75,7 @@ export default {
       name: '删除用户',
       summary: '删除用户',
       description: '删除用户',
-      path: '/api/system/auth/OperatorControl/delete',
+      path: '/api/admin/UserControl/delete',
       type: 'post',
       ZodSchema: {
         body: z.object({

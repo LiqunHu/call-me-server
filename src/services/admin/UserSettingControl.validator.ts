@@ -7,7 +7,7 @@ export default {
       name: 'changePassword',
       summary: 'changePassword',
       description: 'changePassword',
-      path: '/api/admin/user/UserSetting/changePassword',
+      path: '/api/admin/UserSetting/changePassword',
       type: 'post',
       ZodSchema: {
         body: z.object({
