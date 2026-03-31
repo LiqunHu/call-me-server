@@ -1,9 +1,25 @@
 import 'dotenv/config'
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
+import { createLogger } from '@logger'
 
 const pool = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
-const prisma = new PrismaClient({ adapter: pool })
+const logger = createLogger('PrismaSeed')
+const prisma = new PrismaClient({
+  adapter: pool,
+  log: [{ emit: 'event', level: 'query' }],
+})
+prisma.$on('query', (event) => {
+  logger.debug(
+    {
+      query: event.query,
+      params: event.params,
+      duration: event.duration,
+      target: event.target,
+    },
+    'prisma query',
+  )
+})
 
 async function main() {
   const defaultGroup = await prisma.common_group.create({

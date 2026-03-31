@@ -1,11 +1,27 @@
 import { PrismaClient } from '@prisma/client.js'
 import { PrismaPg } from '@prisma/adapter-pg'
+import { createLogger } from '@logger'
 
 export let prisma: PrismaClient
+const logger = createLogger('Prisma')
 
 export function initDB(url: string) {
   const pool = new PrismaPg({ connectionString: url })
-  prisma = new PrismaClient({ adapter: pool })
+  prisma = new PrismaClient({
+    adapter: pool,
+    log: [{ emit: 'event', level: 'query' }],
+  })
+  prisma.$on('query', (event) => {
+    logger.debug(
+      {
+        query: event.query,
+        params: event.params,
+        duration: event.duration,
+        target: event.target,
+      },
+      'prisma query',
+    )
+  })
 }
 
 export async function closeDB() {
